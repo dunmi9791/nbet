@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+<menuitem name="EBS Process" id="nbet_root_menu" web_icon="nbet__process,static/src/img/icon.png"/>
+
+    <menuitem name="Finance " id="nbet_finance_menu" parent="nbet_root_menu"
+              sequence="1" />
+    <menuitem name="General" id="nbet_general_menu" parent="nbet_root_menu"
+              sequence="2" />
+        <menuitem name="Travel Advance" id="nbet_travel_advance_menu" parent="nbet_general_menu"
+              sequence="6" action="action_nbet_travel_advance"/>
+
+    <menuitem name="OCMA" id="nbet_ocma_menu" parent="nbet_root_menu"
+              sequence="3" />
+
+
+</odoo>

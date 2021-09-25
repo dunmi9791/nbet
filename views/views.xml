@@ -1,60 +1,80 @@
 <odoo>
   <data>
-    <!-- explicit list view definition -->
-    <!--
-    <record model="ir.ui.view" id="nbet__process.list">
-      <field name="name">NBET_Process list</field>
-      <field name="model">nbet__process.nbet__process</field>
-      <field name="arch" type="xml">
-        <tree>
-          <field name="name"/>
-          <field name="value"/>
-          <field name="value2"/>
-        </tree>
-      </field>
-    </record>
-    -->
 
-    <!-- actions opening views on models -->
-    <!--
-    <record model="ir.actions.act_window" id="nbet__process.action_window">
-      <field name="name">NBET_Process window</field>
-      <field name="res_model">nbet__process.nbet__process</field>
-      <field name="view_mode">tree,form</field>
-    </record>
-    -->
+   <record id="view_travel_details_tree" model="ir.ui.view">
+            <field name="name">travel.details.tree</field>
+            <field name="model">travel.details</field>
+            <field name="arch" type="xml">
+                <tree string="Travel Details" create="true" delete="true" editable="bottom">
 
-    <!-- server action to the one above -->
-    <!--
-    <record model="ir.actions.server" id="nbet__process.action_server">
-      <field name="name">NBET_Process server</field>
-      <field name="model_id" ref="model_nbet__process_nbet__process"/>
-      <field name="state">code</field>
-      <field name="code">
-        action = {
-          "type": "ir.actions.act_window",
-          "view_mode": "tree,form",
-          "res_model": self._name,
-        }
-      </field>
-    </record>
-    -->
+                    <field name="location" />
+                    <field name="allowance"/>
+                    <field name="rates"/>
+                    <field name="days"/>
+                    <field name="total"/>
 
-    <!-- Top menu item -->
-    <!--
-    <menuitem name="NBET_Process" id="nbet__process.menu_root"/>
-    -->
-    <!-- menu categories -->
-    <!--
-    <menuitem name="Menu 1" id="nbet__process.menu_1" parent="nbet__process.menu_root"/>
-    <menuitem name="Menu 2" id="nbet__process.menu_2" parent="nbet__process.menu_root"/>
-    -->
-    <!-- actions -->
-    <!--
-    <menuitem name="List" id="nbet__process.menu_1_list" parent="nbet__process.menu_1"
-              action="nbet__process.action_window"/>
-    <menuitem name="Server to list" id="nbet__process" parent="nbet__process.menu_2"
-              action="nbet__process.action_server"/>
-    -->
+
+
+                </tree>
+            </field>
+        </record>
+      <record id="view_travel_request_form" model="ir.ui.view">
+        <field name="name">travelrequest.form</field>
+        <field name="model">travel_advance.nbet_process</field>
+        <field name="arch" type="xml">
+            <form string="Travel Advance Request" duplicate="0">
+                <header>
+                    <button name="travel_advance_request" type="object" string="Request Travel Advance" class="oe_highlight" states="draft"/>
+                    <button name="travel_advance_approve" type="object" string="Approve travel advance" class="oe_highlight"  states="Requested"/>
+                    <button name="travel_advance_fin_approve" type="object" string="Financial Approval" class="oe_highlight" states="HOD Approve"/>
+                    <button name="travel_advance_reject" type="object" string="Reject Request" class="oe_highlight" states="Requested" />
+                    <button name="travel2_advance_reject" type="object" string="Reject Request" class="oe_highlight" states="HOD Approve" />
+
+                    <button name="process" string="Process" class="oe_highlight" states="Fin Approve"  type="object"/>
+
+                <field name="state" widget="statusbar" statusbar_visible="draft,Requested,Approved,Rejected"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object" groups="hr.group_hr_user" class="oe_stat_button" icon="fa-archive">
+<!--                                <field name="active" widget="boolean_button" options="{&quot;terminology&quot;: &quot;archive&quot;}"/>-->
+                            </button>
+                        </div>
+                    <group>
+                <group>
+                <field name="request_date"/>
+                <field name="request_no"/>
+                <field name="traveller_name"/>
+                <field name="travel_date"/>
+
+                </group>
+                    <group>
+
+                    </group>
+                    </group>
+
+
+                    <notebook>
+                    <page string="Travel Details">
+                        <field name="travel_details_ids" >
+                        </field>
+
+
+
+                    </page>
+                    </notebook>
+                    <group>
+                    <field name="amount_total"/>
+                        <field name="justification"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                <field name="message_follower_ids" widget="mail_followers"/>
+                <field name="message_ids" widget="mail_thread"/>
+            </div>
+            </form>
+        </field>
+      </record>
+
   </data>
 </odoo>
