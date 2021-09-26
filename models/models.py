@@ -83,7 +83,9 @@ class TravelAdvanceRequest(models.Model):
     def travel2_advance_reject(self):
         self.change_state('Rejected')
 
-
+    @api.multi
+    def process(self):
+        self.change_state('process')
 
 
 class TravelDetails(models.Model):
