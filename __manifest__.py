@@ -24,7 +24,6 @@
 
     # always loaded
     'data': [
-        'data/groups.xml',
         'views/actions.xml',
         'views/views.xml',
         'views/templates.xml',
