@@ -25,9 +25,9 @@
     # always loaded
     'data': [
         'data/groups.xml',
+        'views/actions.xml',
         'views/views.xml',
         'views/templates.xml',
-        'views/actions.xml',
         'views/menu.xml',
         'data/automation.xml',
         'security/ir.model.access.csv',
