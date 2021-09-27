@@ -25,12 +25,12 @@
     # always loaded
     'data': [
         'data/groups.xml',
-        'security/ir.model.access.csv',
         'views/views.xml',
         'views/templates.xml',
         'views/actions.xml',
         'views/menu.xml',
         'data/automation.xml',
+        'security/ir.model.access.csv',
     ],
     # only loaded in demonstration mode
     'demo': [
