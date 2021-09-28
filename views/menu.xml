@@ -9,6 +9,9 @@
               sequence="2" />
         <menuitem name="Travel Advance" id="nbet_travel_advance_menu" parent="nbet_general_menu"
               sequence="6" action="action_nbet_travel_advance"/>
+        <menuitem name="Staff Advance" id="nbet_staff_advance_menu" parent="nbet_general_menu"
+              sequence="7" action="action_nbet_staff_advance"/>
+
 
     <menuitem name="OCMA" id="nbet_ocma_menu" parent="nbet_root_menu"
               sequence="3" />

@@ -107,6 +107,54 @@ class TravelDetails(models.Model):
         self.total = self.rates * self.days
 
 
+class AdvanceRequest(models.Model):
+    _name = 'advance_request.ebs'
+    _rec_name = 'name'
+    _description = 'Table for Advance request'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+
+    name = fields.Char(string="Names")
+    request_no = fields.Char(string="Request Number", default=lambda self: _('New'), requires=False, readonly=True,
+                             trace_visibility='onchange', )
+    designation = fields.Char(string="Designation", required=False, )
+    purpose = fields.Char(string="Purpose of Advance", required=False, )
+    date = fields.Date(string="Date of Advance", required=False, )
+    advance_details_ids = fields.One2many(comodel_name="advance_details.ebs", inverse_name="advance_request_id",
+                                         string="Advance Details", required=False, )
+    amount_total = fields.Float('Total Amount', compute='_amount_total', store=True)
+    state = fields.Selection(string="",
+                             selection=[('draft', 'draft'), ('Requested', 'Requested'), ('HOD Approve', 'HOD Approval'),
+                                        ('FC Approve', 'FC Approved'), ('CFO Approve', 'CFO Approved'),
+                                        ('CEO Approve', 'CEO Approved'), ('CFO Forward', 'CFO Forward'),
+                                        ('Input Details', 'Input Details'), ('Review Details', 'Review Details'),
+                                        ('process', 'Processed'),
+                                        ('Rejected', 'Rejected'), ], required=False, copy=False, default='draft',
+                             readonly=True, track_visibility='onchange', )
+
+    @api.one
+    @api.depends('advance_details_ids.amount', )
+    def _amount_total(self):
+        self.amount_total = sum(advance_details.amount for advance_details in self.advance_details_ids)
+
+    @api.model
+    def create(self, vals):
+        if vals.get('request_no', _('New')) == _('New'):
+            vals['request_no'] = self.env['ir.sequence'].next_by_code('increment_staff_advance') or _('New')
+        result = super(AdvanceRequest, self).create(vals)
+        return result
+
+
+class AdvanceDetails(models.Model):
+    _name = 'advance_details.ebs'
+    _rec_name = 'name'
+    _description = 'Table for details of advance'
+
+    name = fields.Char()
+    description = fields.Char(string="Description", required=False, )
+    amount = fields.Float(string="Amount",  required=False, )
+    advance_request_id = fields.Many2one(comodel_name="advance_request.ebs", string="", required=False, )
+
+
 
 
 # class nbet__process(models.Model):
