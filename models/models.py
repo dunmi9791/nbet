@@ -109,7 +109,7 @@ class TravelDetails(models.Model):
 
 class AdvanceRequest(models.Model):
     _name = 'advance_request.ebs'
-    _rec_name = 'name'
+    _rec_name = 'request_no'
     _description = 'Table for Advance request'
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
