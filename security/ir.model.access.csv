@@ -3,3 +3,5 @@ access_nbet_process,nbet.process,model_travel_advance_nbet_process,,1,1,1,0
 access_nbet_process2,nbet.process2,model_travel_details,,1,1,1,0
 access_nbet_process3,nbet.process3,model_advance_details_ebs,,1,1,1,0
 access_nbet_process4,nbet.process4,model_advance_request_ebs,,1,1,1,0
+access_nbet_process5,nbet.process5,model_payment_voucher_ebs,,1,1,1,0
+access_nbet_process6,nbet.process6,model_voucher_details_ebs,,1,1,1,0

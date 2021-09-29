@@ -225,14 +225,16 @@ class AdvanceDetails(models.Model):
 class PaymentVoucher(models.Model):
     _name = 'payment_voucher.ebs'
     _rec_name = 'voucher_no'
-    _description = 'payment voucher table'
+    _description = 'payment voucher'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     name = fields.Char()
     deptal_no = fields.Char(string="Deptal Number", required=False, )
     payee = fields.Char(string="Payee", required=False, )
-    address = fields.Char(string="Address", required=False, )
+    address = fields.Text(string="Address", required=False, )
     class_code = fields.Char(string="Classification Code", required=False, )
-    voucher_no = fields.Char(string="Voucher Number", required=False, )
+    voucher_no = fields.Char(string="Voucher Number", default=lambda self: _('New'), requires=False, readonly=True,
+                             trace_visibility='onchange', )
     voucher_details_ids = fields.One2many(comodel_name="voucher_details.ebs", inverse_name="voucher_id",
                                           string="Voucher Details", required=False, )
     payable_at = fields.Char(string="Payable At", required=False, )
@@ -243,6 +245,13 @@ class PaymentVoucher(models.Model):
                                         ('process', 'Processed'),
                                         ('Rejected', 'Rejected'), ], required=False, copy=False, default='draft',
                              readonly=True, track_visibility='onchange', )
+
+    @api.model
+    def create(self, vals):
+        if vals.get('voucher_no', _('New')) == _('New'):
+            vals['voucher_no'] = self.env['ir.sequence'].next_by_code('increment_payment_voucher') or _('New')
+        result = super(PaymentVoucher, self).create(vals)
+        return result
 
 
 class VoucherDetails(models.Model):

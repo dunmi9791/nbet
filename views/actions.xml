@@ -11,5 +11,10 @@
         <field name="res_model">advance_request.ebs</field>
         <field name="view_mode">tree,form</field>
     </record>
+    <record model="ir.actions.act_window" id="action_nbet_payment_voucher">
+        <field name="name">Payment Voucher</field>
+        <field name="res_model">payment_voucher.ebs</field>
+        <field name="view_mode">kanban,tree,form,pivot</field>
+    </record>
 
 </odoo>
