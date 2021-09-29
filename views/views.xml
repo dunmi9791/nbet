@@ -104,8 +104,11 @@
                     <button name="staff_advance_review_details" type="object" string="Confirm Details" class="oe_highlight" states="Input Details"/>
                     <button name="staff_advance_reject" type="object" string="Reject Request" class="oe_highlight" states="Requested" />
                     <button name="staff2_advance_reject" type="object" string="Reject Request" class="oe_highlight" states="HOD Approve" />
+                    <button name="staff3_advance_reject" type="object" string="Reject Request" class="oe_highlight" states="FC Approve" />
+                    <button name="staff4_advance_reject" type="object" string="Reject Request" class="oe_highlight" states="CFO Approve" />
+                    <button name="staff5_advance_reject" type="object" string="Reject Request" class="oe_highlight" states="CEO Approve" />
 
-                    <button name="process" string="Process" class="oe_highlight" states="Fin Approve"  type="object"/>
+                    <button name="process" string="Process" class="oe_highlight" states="Review Details"  type="object"/>
 
                 <field name="state" widget="statusbar" statusbar_visible="draft,Requested,Approved,Rejected"/>
                 </header>

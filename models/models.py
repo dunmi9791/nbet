@@ -143,6 +143,73 @@ class AdvanceRequest(models.Model):
         result = super(AdvanceRequest, self).create(vals)
         return result
 
+    @api.multi
+    def is_allowed_transition(self, old_state, new_state):
+        allowed = [('draft', 'Requested'),
+                   ('Requested', 'HOD Approve'),
+                   ('Requested', 'Rejected'),
+                   ('HOD Approve', 'FC Approve'),
+                   ('FC Approve', 'CFO Approve'),
+                   ('HOD Approve', 'Rejected'),
+                   ('CFO Approve', 'CEO Approve'),
+                   ('CEO Approve', 'CFO Forward'),
+                   ('CFO Forward', 'Input Details'),
+                   ('Input Details', 'Review Details'),
+                   ('Review Details', 'Processed'),
+                   ('FC Approved', 'Rejected'),
+                   ('CFO Approved', 'Rejected'),
+                   ]
+        return (old_state, new_state) in allowed
+
+    @api.multi
+    def change_state(self, new_state):
+        for advance in self:
+            if advance.is_allowed_transition(advance.state, new_state):
+                advance.state = new_state
+            else:
+                msg = _('Moving from %s to %s is not allowed') % (advance.state, new_state)
+                raise UserError(msg)
+
+    @api.multi
+    def staff_advance_request(self):
+        self.change_state('Requested')
+
+    @api.multi
+    def staff_advance_hod_approve(self):
+        self.change_state('HOD Approve')
+
+    @api.multi
+    def staff_advance_fc_approve(self):
+        self.change_state('FC Approve')
+
+    @api.multi
+    def staff_advance_ceo_approve(self):
+        self.change_state('CEO Approve')
+
+    @api.multi
+    def staff_advance_cfo_approve(self):
+        self.change_state('CFO Approve')
+
+    @api.multi
+    def staff_advance_input_details(self):
+        self.change_state('Input Details')
+
+    @api.multi
+    def staff_advance_review_details(self):
+        self.change_state('Review Details')
+
+    @api.multi
+    def staff_advance_cfo_forward(self):
+        self.change_state('CFO Forward')
+
+    @api.multi
+    def staff2_advance_reject(self):
+        self.change_state('Rejected')
+
+    @api.multi
+    def process(self):
+        self.change_state('process')
+
 
 class AdvanceDetails(models.Model):
     _name = 'advance_details.ebs'
@@ -153,6 +220,47 @@ class AdvanceDetails(models.Model):
     description = fields.Char(string="Description", required=False, )
     amount = fields.Float(string="Amount",  required=False, )
     advance_request_id = fields.Many2one(comodel_name="advance_request.ebs", string="", required=False, )
+
+
+class PaymentVoucher(models.Model):
+    _name = 'payment_voucher.ebs'
+    _rec_name = 'voucher_no'
+    _description = 'payment voucher table'
+
+    name = fields.Char()
+    deptal_no = fields.Char(string="Deptal Number", required=False, )
+    payee = fields.Char(string="Payee", required=False, )
+    address = fields.Char(string="Address", required=False, )
+    class_code = fields.Char(string="Classification Code", required=False, )
+    voucher_no = fields.Char(string="Voucher Number", required=False, )
+    voucher_details_ids = fields.One2many(comodel_name="voucher_details.ebs", inverse_name="voucher_id",
+                                          string="Voucher Details", required=False, )
+    payable_at = fields.Char(string="Payable At", required=False, )
+    originating_memo = fields.Char(string="Originating Memo", required=False, )
+    state = fields.Selection(string="",
+                             selection=[('draft', 'draft'), ('Prepared', 'Prepared'), ('FC Sign Off', 'FC Sign Off'),
+                                        ('CFO Approval', 'CFO Approval'),
+                                        ('process', 'Processed'),
+                                        ('Rejected', 'Rejected'), ], required=False, copy=False, default='draft',
+                             readonly=True, track_visibility='onchange', )
+
+
+class VoucherDetails(models.Model):
+    _name = 'voucher_details.ebs'
+    _rec_name = 'name'
+    _description = 'New Description'
+
+    name = fields.Char()
+    voucher_id = fields.Many2one(comodel_name="payment_voucher.ebs", string="", required=False, )
+    date = fields.Date(string="Date", required=False, )
+    details = fields.Text(string="Detailed Description of Service and Work", required=False, )
+    rate = fields.Float(string="Rate/Amount",  required=False, )
+
+
+
+
+
+
 
 
 
