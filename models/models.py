@@ -253,6 +253,25 @@ class PaymentVoucher(models.Model):
         result = super(PaymentVoucher, self).create(vals)
         return result
 
+    @api.multi
+    def is_allowed_transition(self, old_state, new_state):
+        allowed = [('draft', 'Prepared'),
+                   ('Prepared', 'FC Sign Off'),
+                   ('FC Sign Off', 'Rejected'),
+                   ('FC Sign Off', 'CFO Approval'),
+                   ('process', 'CFO Approve'),
+                   ]
+        return (old_state, new_state) in allowed
+
+    @api.multi
+    def change_state(self, new_state):
+        for voucher in self:
+            if voucher.is_allowed_transition(voucher.state, new_state):
+                voucher.state = new_state
+            else:
+                msg = _('Moving from %s to %s is not allowed') % (voucher.state, new_state)
+                raise UserError(msg)
+
 
 class VoucherDetails(models.Model):
     _name = 'voucher_details.ebs'
