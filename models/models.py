@@ -130,6 +130,12 @@ class AdvanceRequest(models.Model):
                                         ('process', 'Processed'),
                                         ('Rejected', 'Rejected'), ], required=False, copy=False, default='draft',
                              readonly=True, track_visibility='onchange', )
+    deptal_no = fields.Char(string="Deptal Number", required=False, )
+    payee = fields.Char(string="Payee", required=False, )
+    payee_id = fields.Many2one('res.partner', string='Payee', track_visibility='onchange', readonly=True,
+                               states={'draft': [('readonly', False)], 'Input Details': [('readonly', False)]}, )
+    class_code = fields.Char(string="Classification Code", required=False, )
+    voucher_obj = fields.Many2one('payment_voucher.ebs', invisible=1)
 
     @api.one
     @api.depends('advance_details_ids.amount', )
@@ -155,7 +161,7 @@ class AdvanceRequest(models.Model):
                    ('CEO Approve', 'CFO Forward'),
                    ('CFO Forward', 'Input Details'),
                    ('Input Details', 'Review Details'),
-                   ('Review Details', 'Process'),
+                   ('Review Details', 'process'),
                    ('FC Approved', 'Rejected'),
                    ('CFO Approved', 'Rejected'),
                    ]
@@ -208,6 +214,21 @@ class AdvanceRequest(models.Model):
 
     @api.multi
     def process(self):
+        voucher_obj = self.env['payment_voucher.ebs'].create({'originating_memo': self.request_no,
+                                                              'payee_id': self.payee_id.id,
+                                                              'amount': self.amount_total,
+                                                              'class_code': self.class_code,
+                                                              'deptal_no': self.deptal_no})
+        self.voucher_obj = voucher_obj
+        for expense_val in self.advance_details_ids:
+            advance_details = []
+            exp_detail = {'name': expense_val.description,
+                          'rate': expense_val.amount,
+                          'voucher_id': self.voucher_obj.id,
+                           }
+            advance_details.append(exp_detail)
+            self.env['voucher_details.ebs'].create(advance_details)
+
         self.change_state('process')
 
 
@@ -230,7 +251,8 @@ class PaymentVoucher(models.Model):
 
     name = fields.Char()
     deptal_no = fields.Char(string="Deptal Number", required=False, )
-    payee = fields.Char(string="Payee", required=False, )
+    payee_id = fields.Many2one('res.partner', string='Payee', track_visibility='onchange', readonly=True,
+                                 states={'draft': [('readonly', False)], 'Fin Approve': [('readonly', False)]}, )
     address = fields.Text(string="Address", required=False, )
     class_code = fields.Char(string="Classification Code", required=False, )
     voucher_no = fields.Char(string="Voucher Number", default=lambda self: _('New'), requires=False, readonly=True,
@@ -245,6 +267,9 @@ class PaymentVoucher(models.Model):
                                         ('process', 'Processed'),
                                         ('Rejected', 'Rejected'), ], required=False, copy=False, default='draft',
                              readonly=True, track_visibility='onchange', )
+    amount = fields.Float('Amount', )
+    account_id = fields.Many2one(string="Debit Account", comodel_name='account.account')
+    inv_obj = fields.Many2one('account.invoice', invisible=1)
 
     @api.model
     def create(self, vals):
@@ -259,7 +284,8 @@ class PaymentVoucher(models.Model):
                    ('Prepared', 'FC Sign Off'),
                    ('FC Sign Off', 'Rejected'),
                    ('FC Sign Off', 'CFO Approval'),
-                   ('process', 'CFO Approve'),
+                   ('CFO Approval', 'process'),
+                   ('process', 'CFO Approval'),
                    ]
         return (old_state, new_state) in allowed
 
@@ -272,6 +298,46 @@ class PaymentVoucher(models.Model):
                 msg = _('Moving from %s to %s is not allowed') % (voucher.state, new_state)
                 raise UserError(msg)
 
+    @api.multi
+    def payment_voucher_request(self):
+        self.change_state('Prepared')
+
+    @api.multi
+    def payment_voucher_prepare(self):
+        self.change_state('FC Sign Off')
+
+    @api.multi
+    def voucher_cfo_approve(self):
+        self.change_state('CFO Approval')
+
+    @api.multi
+    def payment_voucher_process(self):
+        if not self.account_id:
+            raise UserError(_('You Have to enter Account to post Voucher'))
+        if not self.payee_id:
+            raise UserError(_('You Have to enter payee to post Voucher'))
+
+        inv_line_obj = self.env['account.invoice'].create({
+            'type': 'in_invoice',
+            'partner_id': self.payee_id.id,
+            'reference': self.voucher_no,
+            'origin': self.originating_memo,
+
+        })
+        self.inv_obj = inv_line_obj
+
+        for expense_val in self.voucher_details_ids:
+            expense_details = []
+            exp_detail = {'name': expense_val.name,
+                          'account_id': self.account_id.id,
+                          'quantity': 1,
+                          'price_unit': expense_val.rate,
+                          'invoice_id': self.inv_obj.id, }
+            expense_details.append(exp_detail)
+            self.env['account.invoice.line'].create(expense_details)
+
+        self.change_state('process')
+
 
 class VoucherDetails(models.Model):
     _name = 'voucher_details.ebs'
@@ -283,6 +349,44 @@ class VoucherDetails(models.Model):
     date = fields.Date(string="Date", required=False, )
     details = fields.Text(string="Detailed Description of Service and Work", required=False, )
     rate = fields.Float(string="Rate/Amount",  required=False, )
+
+
+class PaymentMandate(models.Model):
+    _name = 'payment_mandate.ebs'
+    _rec_name = 'mandate_no'
+    _description = 'Payment Mandate'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+
+    name = fields.Char()
+    payee_id = fields.Many2one('res.partner', string='Payee', track_visibility='onchange', readonly=True,
+                               states={'draft': [('readonly', False)], 'Fin Approve': [('readonly', False)]}, )
+    description = fields.Text(string="Description", required=False, )
+    date = fields.Date(string="Date", required=False, )
+    mandate_ref = fields.Char(string="Mandate Reference")
+    amount = fields.Float(string="Amount")
+    mode = fields.Selection(string="Mode of settlement", selection=[('Remita', 'Remita'), ('GIFMIS', 'GIFMIS'), ],
+                            required=False, )
+    account_no = fields.Char(string="Account Number")
+    bank = fields.Char(string="Bank")
+    account_name = fields.Char(string="Account Name")
+    state = fields.Selection(string="",
+                             selection=[('draft', 'draft'), ('Forward', 'Forward'), ('FC Review', 'FC Review'),
+                                        ('CFO Review', 'CFO Review'), ('CEO Approval', 'CEO Approval'),
+                                        ('Audit Review', 'Audit Review'), ('CFO forward', 'CFO forward'), ('FC forward', 'FC forward'),
+                                        ('Dispatch', 'Dispatch'), ('acknowledge', 'acknowledge'),
+                                        ('Rejected', 'Rejected'), ], required=False, copy=False, default='draft',
+                             readonly=True, track_visibility='onchange', )
+    mandate_no = fields.Char(string="Mandate Number", default=lambda self: _('New'), requires=False, readonly=True,
+                             trace_visibility='onchange', )
+
+    @api.model
+    def create(self, vals):
+        if vals.get('mandate_no', _('New')) == _('New'):
+            vals['mandate_no'] = self.env['ir.sequence'].next_by_code('increment_payment_mandate') or _('New')
+        result = super(PaymentMandate, self).create(vals)
+        return result
+
+
 
 
 
