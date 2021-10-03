@@ -269,6 +269,63 @@
        </field>
       </record>
 
+      <record id="view_payment_mandate_form" model="ir.ui.view">
+        <field name="name">paymentmandate.form</field>
+        <field name="model">payment_mandate.ebs</field>
+        <field name="arch" type="xml">
+            <form string="Payment Mandate" duplicate="0">
+                <header>
+                    <button name="payment_mandate_forward" type="object" string="Submit Mandate" class="oe_highlight" states="draft"/>
+                    <button name="payment_mandate_review" type="object" string="FC Review" class="oe_highlight"  states="Forward"/>
+                    <button name="payment_mandate_cfo_review" type="object" string="CFO Review" class="oe_highlight" states="FC Review"/>
+                    <button name="payment_mandate_reject" type="object" string="Reject Mandate" class="oe_highlight" states="Forward" />
+                    <button name="payment_mandate_reject2" type="object" string="Reject Mandate" class="oe_highlight" states="FC Review" />
+                    <button name="payment_mandate_reject3" type="object" string="Reject Mandate" class="oe_highlight" states="CFO Review" />
+                    <button name="payment_mandate_approve" type="object" string="Approve Mandate" class="oe_highlight" states="CFO Review"/>
+
+                    <button name="process" string="Process" class="oe_highlight" states="Fin Approve"  type="object"/>
+
+                <field name="state" widget="statusbar" statusbar_visible="draft,Requested,Approved,Rejected"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object" groups="hr.group_hr_user" class="oe_stat_button" icon="fa-archive">
+<!--                                <field name="active" widget="boolean_button" options="{&quot;terminology&quot;: &quot;archive&quot;}"/>-->
+                            </button>
+                        </div>
+                    <group>
+                <group>
+                    <field name="mandate_no"/>
+                    <field name="date"/>
+                    <field name="amount" widget="monetary"/>
+                    <field name="description"/>
+                    <field name="mode"/>
+
+
+                </group>
+                    <group>
+                        <field name="mandate_ref"/>
+                        <field name="payee_id"/>
+                        <field name="account_no"/>
+                        <field name="bank"/>
+                        <field name="account_name"/>
+
+                    </group>
+
+                    </group>
+
+
+
+
+                </sheet>
+                <div class="oe_chatter">
+                <field name="message_follower_ids" widget="mail_followers"/>
+                <field name="message_ids" widget="mail_thread"/>
+            </div>
+            </form>
+        </field>
+      </record>
+
 
   </data>
 </odoo>
