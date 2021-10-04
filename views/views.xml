@@ -205,6 +205,8 @@
                         <field name="address"/>
                         <field name="amount" widget="monetary"/>
                         <field name="account_id"/>
+                        <field name="budget_position_id"/>
+                        <field name="analytic_id_id"/>
 
                     </group>
 

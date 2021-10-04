@@ -270,6 +270,8 @@ class PaymentVoucher(models.Model):
     amount = fields.Float('Amount', )
     account_id = fields.Many2one(string="Debit Account", comodel_name='account.account')
     inv_obj = fields.Many2one('account.invoice', invisible=1)
+    budget_position_id = fields.Many2one(comodel_name="account.budget.post", string="Budgetary Position", required=False, )
+    analytic_id_id = fields.Many2one(comodel_name="account.analytic.account", string="Analytic Account", required=False, )
 
     @api.model
     def create(self, vals):
@@ -332,7 +334,8 @@ class PaymentVoucher(models.Model):
                           'account_id': self.account_id.id,
                           'quantity': 1,
                           'price_unit': expense_val.rate,
-                          'invoice_id': self.inv_obj.id, }
+                          'invoice_id': self.inv_obj.id,
+                          'account_analytic_id': self.analytic_id_id.id}
             expense_details.append(exp_detail)
             self.env['account.invoice.line'].create(expense_details)
 
