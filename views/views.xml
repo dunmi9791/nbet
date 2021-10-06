@@ -95,7 +95,7 @@
             <form string="Staff Advance Request" duplicate="0">
                 <header>
                     <button name="staff_advance_request" type="object" string="Request Staff Advance" class="oe_highlight" states="draft"/>
-                    <button name="staff_advance_hod_approve" type="object" string="Staff advance HOD Approve" class="oe_highlight"  states="Requested"/>
+                    <button name="staff_advance_hod_approve" type="object" string="Staff advance HOD Approve" class="oe_highlight" groups="nbet__process.hod_group" states="Requested"/>
                     <button name="staff_advance_fc_approve" type="object" string="FC Approval" class="oe_highlight" states="HOD Approve"/>
                     <button name="staff_advance_cfo_approve" type="object" string="CFO Approval" class="oe_highlight" states="FC Approve"/>
                     <button name="staff_advance_ceo_approve" type="object" string="CEO Approval" class="oe_highlight" states="CFO Approve"/>
