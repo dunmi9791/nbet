@@ -20,10 +20,11 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'mail',],
+    'depends': ['base', 'mail', 'account', 'om_account_budget',],
 
     # always loaded
     'data': [
+        'data/groups.xml',
         'views/actions.xml',
         'views/views.xml',
         'views/templates.xml',

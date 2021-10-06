@@ -114,6 +114,9 @@ class AdvanceRequest(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
     name = fields.Char(string="Names")
+    memo_to = fields.Many2one(comodel_name="res.users", string="TO", required=True,
+                              domain=lambda self: [
+                                  ("groups_id", "=", self.env.ref("nbet__process.hod_group").id)])
     request_no = fields.Char(string="Request Number", default=lambda self: _('New'), requires=False, readonly=True,
                              trace_visibility='onchange', )
     designation = fields.Char(string="Designation", required=False, )
@@ -121,7 +124,7 @@ class AdvanceRequest(models.Model):
     date = fields.Date(string="Date of Advance", required=False, )
     advance_details_ids = fields.One2many(comodel_name="advance_details.ebs", inverse_name="advance_request_id",
                                          string="Advance Details", required=False, )
-    amount_total = fields.Float('Total Amount', compute='_amount_total', store=True)
+    amount_total = fields.Monetary('Total Amount', compute='_amount_total', store=True)
     state = fields.Selection(string="",
                              selection=[('draft', 'draft'), ('Requested', 'Requested'), ('HOD Approve', 'HOD Approval'),
                                         ('FC Approve', 'FC Approved'), ('CFO Approve', 'CFO Approved'),
@@ -136,6 +139,14 @@ class AdvanceRequest(models.Model):
                                states={'draft': [('readonly', False)], 'Input Details': [('readonly', False)]}, )
     class_code = fields.Char(string="Classification Code", required=False, )
     voucher_obj = fields.Many2one('payment_voucher.ebs', invisible=1)
+    company_id = fields.Many2one('res.company', string='', required=True, readonly=True,
+                                 default=lambda self: self.env.user.company_id)
+    currency_id = fields.Many2one('res.currency', compute='_compute_currency', store=True, string="Currency")
+
+    @api.one
+    @api.depends('company_id')
+    def _compute_currency(self):
+        self.currency_id = self.company_id.currency_id or self.env.user.company_id.currency_id
 
     @api.one
     @api.depends('advance_details_ids.amount', )
@@ -271,7 +282,7 @@ class PaymentVoucher(models.Model):
     account_id = fields.Many2one(string="Debit Account", comodel_name='account.account')
     inv_obj = fields.Many2one('account.invoice', invisible=1)
     budget_position_id = fields.Many2one(comodel_name="account.budget.post", string="Budgetary Position", required=False, )
-    analytic_id_id = fields.Many2one(comodel_name="account.analytic.account", string="Analytic Account", required=False, )
+    analytic_id_id = fields.Many2one(comodel_name="account.analytic.account", string="Budget Line", required=False, )
 
     @api.model
     def create(self, vals):

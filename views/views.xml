@@ -121,8 +121,8 @@
                     <group>
                 <group>
                     <field name="request_no"/>
-                    <field name="name"/>
-                    <field name="designation"/>
+                    <field name="memo_to"/>
+
 
                 </group>
                     <group>
@@ -137,10 +137,7 @@
                         </group>
                         <group string="Voucher Details">
                             <field name="payee_id" />
-                            <field name="deptal_no" >
-                        </field>
-                            <field name="class_code" >
-                        </field>
+
                         </group>
                     </group>
 
@@ -156,7 +153,7 @@
 
                     </notebook>
                     <group>
-                    <field name="amount_total"/>
+                    <field name="amount_total" widget="monetary"/>
                     </group>
                 </sheet>
                 <div class="oe_chatter">
