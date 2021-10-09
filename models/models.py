@@ -116,7 +116,7 @@ class AdvanceRequest(models.Model):
     name = fields.Char(string="Names")
     memo_to = fields.Many2one(comodel_name="res.users", string="TO", required=True,
                               domain=lambda self: [
-                                  ("groups_id", "=", self.env.ref("nbet__process.hod_group").id)])
+                                  ("groups_id", "=", self.env.ref("nbet.hod_group").id)])
     request_no = fields.Char(string="Request Number", default=lambda self: _('New'), requires=False, readonly=True,
                              trace_visibility='onchange', )
     designation = fields.Char(string="Designation", required=False, )
