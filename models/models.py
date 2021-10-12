@@ -280,7 +280,7 @@ class PaymentVoucher(models.Model):
     account_id = fields.Many2one(string="Debit Account", comodel_name='account.account')
     inv_obj = fields.Many2one('account.invoice', invisible=1)
     budget_position_id = fields.Many2one(comodel_name="account.budget.post", string="Budgetary Position", required=False, )
-    budget_position = fields.Integer(string="Budgetary Position", compute='_total_realised', store=True)
+    # budget_position = fields.Integer(string="Budgetary Position", compute='_total_realised', store=True)
     analytic_id_id = fields.Many2one(comodel_name="account.analytic.account", string="Budget Line", required=False, )
     mode_payment = fields.Many2one(comodel_name='account.journal', string='Payment Mode')
 
