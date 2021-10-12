@@ -19,6 +19,10 @@
 
     <menuitem name="OCMA" id="nbet_ocma_menu" parent="nbet_root_menu"
               sequence="3" />
+    <menuitem name="DISCO Invoicing" id="nbet_disco_invoicing_menu" parent="nbet_ocma_menu"
+              sequence="6" action="action_nbet_disco_invoicing"/>
+<!--    <menuitem name="GENCO Invoice Verification" id="nbet_genco_invoicing_menu" parent="nbet_ocma_menu"-->
+<!--              sequence="6" action="action_nbet_genco_invoicing"/>-->
 
 
 </odoo>

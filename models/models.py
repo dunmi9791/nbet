@@ -402,6 +402,58 @@ class PaymentMandate(models.Model):
 
 
 
+class DiscoInvoicing(models.Model):
+    _name = 'disco_invoicing.ebs'
+    _description = 'DiscoInvoicing'
+
+    name = fields.Char(string='Billing Circle', compute="billing_circle")
+    month = fields.Selection(selection=[('JAN', 'January'), ('FEB', 'February'), ('MAR', 'March'), ('APR', 'April'),
+                              ('MAY', 'May'), ('JUN', 'June'), ('JUL', 'July'), ('AUG', 'August'),
+                              ('AUG', 'September'), ('OCT', 'October'), ('NOV', 'November'), ('DEC', 'December'), ],
+                             string='Billing Month',)
+    year = fields.Selection(selection='_get_years', string='Billing Year', store=True)
+    disco = fields.Many2one(comodel_name='res.partner', string='Disco', required=False)
+    invoice_date = fields.Date(string='Date of Invoicing', required=False)
+    submission_date = fields.Date(string='Invoice Submission Date', required=False)
+    minimum_remitance = fields.Float(string='Minimum Remittance Amount', )
+    invoice_due_date = fields.Date(string='Invoice Due Date')
+    invoice_id = fields.Many2one(string='Invoice', comodel_name='account.invoice', )
+    disco_outstanding = fields.Float(string='Total Outstanding')
+    outstanding_no_interest = fields.Float(string='Outstanding less interest',)
+    interest_period = fields.Float(string='Interest outstanding for the period',)
+    cummulative_interest = fields.Float(string='Total Interest')
+
+
+    @api.multi
+    @api.depends('')
+    def _get_years(self):
+        year_list = []
+        for i in range(2010, 2036):
+            year_list.append((i, str(i)))
+        return year_list
+
+
+    @api.one
+    @api.depends('month', 'year')
+    def billing_circle(self):
+        for record in self:
+            m = record.month
+            y = record.year
+            record['name'] = ("%s%s" % (m ,y))
+
+
+class VoucherType(models.Model):
+    _name = 'voucher_type.ebs'
+    _description = 'VoucherType'
+
+    name = fields.Char()
+    account_id = fields.Many2one(comodel='account.account', string='Account')
+    analytic_account_id = fields.Many2one(comodel='account.analytic.account', string='Analytic Account')
+    mode_payment = fields.Many2one(comodel='account.journal', string='Payment Mode')
+
+
+
+
 
 
 

@@ -6,3 +6,4 @@ access_nbet_process4,nbet.process4,model_advance_request_ebs,,1,1,1,0
 access_nbet_process5,nbet.process5,model_payment_voucher_ebs,,1,1,1,0
 access_nbet_process6,nbet.process6,model_voucher_details_ebs,,1,1,1,0
 access_nbet_process7,nbet.process7,model_payment_mandate_ebs,,1,1,1,0
+access_nbet_process8,nbet.process8,model_disco_invoicing_ebs,,1,1,1,0

@@ -21,5 +21,15 @@
         <field name="res_model">payment_mandate.ebs</field>
         <field name="view_mode">tree,form,pivot,kanban</field>
     </record>
+    <record model="ir.actions.act_window" id="action_nbet_disco_invoicing">
+        <field name="name">DISCO Invoicing</field>
+        <field name="res_model">disco_invoicing.ebs</field>
+        <field name="view_mode">tree,form,pivot,kanban</field>
+    </record>
+<!--    <record model="ir.actions.act_window" id="action_nbet_genco_invoicing">-->
+<!--        <field name="name">GENCO Invoicing</field>-->
+<!--        <field name="res_model">genco_invoicing.ebs</field>-->
+<!--        <field name="view_mode">tree,form,pivot,kanban</field>-->
+<!--    </record>-->
 
 </odoo>
