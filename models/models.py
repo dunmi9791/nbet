@@ -284,12 +284,12 @@ class PaymentVoucher(models.Model):
     analytic_id_id = fields.Many2one(comodel_name="account.analytic.account", string="Budget Line", required=False, )
     mode_payment = fields.Many2one(comodel_name='account.journal', string='Payment Mode')
 
-    @api.one
-    @api.depends('analytic_id_id', )
-    def _total_realised(self):
-
-        self.total_realised = sum(paid.installment
-                                  for paid in self.schedule_installments_ids.filtered(lambda o: o.state == 'paid'))
+    # @api.one
+    # @api.depends('analytic_id_id', )
+    # def _total_realised(self):
+    #
+    #     self.total_realised = sum(paid.installment
+    #                               for paid in self.schedule_installments_ids.filtered(lambda o: o.state == 'paid'))
 
     @api.model
     def create(self, vals):
