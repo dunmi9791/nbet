@@ -261,9 +261,7 @@ class PaymentVoucher(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
     name = fields.Char()
-    deptal_no = fields.Char(string="Deptal Number", required=False, )
-    payee_id = fields.Many2one('res.partner', string='Payee', track_visibility='onchange', readonly=True,
-                                 states={'draft': [('readonly', False)], 'Fin Approve': [('readonly', False)]}, )
+    voucher_type = fields.Many2one(comodel_name="voucher_type.ebs", string='Voucher Type')
     address = fields.Text(string="Address", required=False, )
     class_code = fields.Char(string="Classification Code", required=False, )
     voucher_no = fields.Char(string="Voucher Number", default=lambda self: _('New'), requires=False, readonly=True,
@@ -282,7 +280,16 @@ class PaymentVoucher(models.Model):
     account_id = fields.Many2one(string="Debit Account", comodel_name='account.account')
     inv_obj = fields.Many2one('account.invoice', invisible=1)
     budget_position_id = fields.Many2one(comodel_name="account.budget.post", string="Budgetary Position", required=False, )
+    budget_position = fields.Integer(string="Budgetary Position", compute='_total_realised', store=True)
     analytic_id_id = fields.Many2one(comodel_name="account.analytic.account", string="Budget Line", required=False, )
+    mode_payment = fields.Many2one(comodel_name='account.journal', string='Payment Mode')
+
+    @api.one
+    @api.depends('analytic_id_id', )
+    def _total_realised(self):
+
+        self.total_realised = sum(paid.installment
+                                  for paid in self.schedule_installments_ids.filtered(lambda o: o.state == 'paid'))
 
     @api.model
     def create(self, vals):
@@ -362,6 +369,7 @@ class VoucherDetails(models.Model):
     voucher_id = fields.Many2one(comodel_name="payment_voucher.ebs", string="", required=False, )
     date = fields.Date(string="Date", required=False, )
     details = fields.Text(string="Detailed Description of Service and Work", required=False, )
+    payee_id = fields.Many2one('res.partner', string='Payee', track_visibility='onchange', readonly=True,)
     rate = fields.Float(string="Rate/Amount",  required=False, )
 
 
@@ -447,9 +455,8 @@ class VoucherType(models.Model):
     _description = 'VoucherType'
 
     name = fields.Char()
-    account_id = fields.Many2one(comodel='account.account', string='Account')
-    analytic_account_id = fields.Many2one(comodel='account.analytic.account', string='Analytic Account')
-    mode_payment = fields.Many2one(comodel='account.journal', string='Payment Mode')
+    account_id = fields.Many2one(comodel_name='account.account', string='Account')
+    analytic_account_id = fields.Many2one(comodel_name='account.analytic.account', string='Analytic Account')
 
 
 

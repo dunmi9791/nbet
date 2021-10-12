@@ -190,20 +190,19 @@
                         </div>
                     <group>
                 <group>
-                <field name="deptal_no"/>
-                    <field name="originating_memo"/>
 
-                <field name="class_code"/>
+                    <field name="originating_memo"/>
+                    <field name="voucher_type"/>
+
+
                 <field name="voucher_no"/>
 
                 </group>
                     <group>
-                        <field name="payee_id"/>
-                        <field name="address"/>
+
                         <field name="amount" widget="monetary"/>
-                        <field name="account_id"/>
-                        <field name="budget_position_id"/>
-                        <field name="analytic_id_id"/>
+                        <field name="mode_payment" domain="[('type', 'in', ('bank', 'cash'))]" />
+
 
                     </group>
 
@@ -249,16 +248,13 @@
        <field name="arch" type="xml">
           <kanban>
               <field name="voucher_no"/>
-              <field name="payee_id"/>
-              <field name="class_code"/>
 
               <templates>
                  <t t-name="kanban-box">
                      <div t-attf-class="oe_kanban_global_click">
 
-                           <p><h1><field name="payee_id"/></h1></p>
+
                            <p><h4><field name="originating_memo"/></h4></p>
-                           <p><field name="class_code"/></p>
 
                </div>
                     </t>
@@ -345,6 +341,29 @@
               </form>
           </field>
       </record>
+      <record id="voucher_type_view_form" model="ir.ui.view">
+          <field name="name">voucher_type_view_form</field>
+          <field name="model">voucher_type.ebs</field>
+          <field name="arch" type="xml">
+              <form string="voucher_type_form">
+                  <sheet>
+                      <group>
+                      <group>
+                          <field name="name"/>
+                          <field name="account_id"/>
+                          <field name="analytic_account_id"/>
+
+                      </group>
+                      <group>
+
+                      </group>
+                      </group>
+                  </sheet>
+              </form>
+          </field>
+
+      </record>
+
 
 
   </data>

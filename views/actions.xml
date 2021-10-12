@@ -31,5 +31,10 @@
 <!--        <field name="res_model">genco_invoicing.ebs</field>-->
 <!--        <field name="view_mode">tree,form,pivot,kanban</field>-->
 <!--    </record>-->
+    <record model="ir.actions.act_window" id="action_nbet_voucher_type">
+        <field name="name">Voucher Types</field>
+        <field name="res_model">voucher_type.ebs</field>
+        <field name="view_mode">tree,form</field>
+    </record>
 
 </odoo>
