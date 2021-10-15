@@ -276,13 +276,20 @@ class PaymentVoucher(models.Model):
                                         ('process', 'Processed'),
                                         ('Rejected', 'Rejected'), ], required=False, copy=False, default='draft',
                              readonly=True, track_visibility='onchange', )
-    amount = fields.Float('Amount', )
+    amount = fields.Float('Amount', compute='_amount', store=True)
     account_id = fields.Many2one(string="Debit Account", comodel_name='account.account')
     inv_obj = fields.Many2one('account.invoice', invisible=1)
     budget_position_id = fields.Many2one(comodel_name="account.budget.post", string="Budgetary Position", required=False, )
     # budget_position = fields.Integer(string="Budgetary Position", compute='_total_realised', store=True)
     analytic_id_id = fields.Many2one(comodel_name="account.analytic.account", string="Budget Line", required=False, )
     mode_payment = fields.Many2one(comodel_name='account.journal', string='Payment Mode')
+    narration = fields.Text(
+        string="Narration",
+        required=False)
+    active = fields.Boolean(
+        string='Active', 
+        required=False, default=True)
+    date = fields.Date(string="Date", required=False, )
 
     # @api.one
     # @api.depends('analytic_id_id', )
@@ -297,6 +304,11 @@ class PaymentVoucher(models.Model):
             vals['voucher_no'] = self.env['ir.sequence'].next_by_code('increment_payment_voucher') or _('New')
         result = super(PaymentVoucher, self).create(vals)
         return result
+
+    @api.one
+    @api.depends('voucher_details_ids.rate', )
+    def _amount(self):
+        self.amount = sum(voucher_details.rate for voucher_details in self.voucher_details_ids)
 
     @api.multi
     def is_allowed_transition(self, old_state, new_state):
@@ -332,30 +344,28 @@ class PaymentVoucher(models.Model):
 
     @api.multi
     def payment_voucher_process(self):
-        if not self.account_id:
-            raise UserError(_('You Have to enter Account to post Voucher'))
-        if not self.payee_id:
+        if not self.voucher_type:
+            raise UserError(_('You Have to enter Voucher type to post Voucher'))
+        if not self.voucher_details_ids.payee_id:
             raise UserError(_('You Have to enter payee to post Voucher'))
 
-        inv_line_obj = self.env['account.invoice'].create({
-            'type': 'in_invoice',
-            'partner_id': self.payee_id.id,
-            'reference': self.voucher_no,
-            'origin': self.originating_memo,
+        inv_line_obj = self.env['account.invoice']
+        for bill_val in self.voucher_details_ids:
+            bill_vals = []
+            bill_details = {
+                'type': 'in_invoice',
+                'partner_id': bill_val.payee_id.id,
+                'reference': self.voucher_no,
+                'origin': self.originating_memo,
+                'invoice_line_ids': [(0, 0, {
+                                             'name': bill_val.details,
+                                             'account_id': self.voucher_type.account_id.id,
+                                             'quantity': 1,
+                                             'price_unit': bill_val.rate, })]
+            }
+            bill_vals.append(bill_details)
+            inv_line_obj.create(bill_vals)
 
-        })
-        self.inv_obj = inv_line_obj
-
-        for expense_val in self.voucher_details_ids:
-            expense_details = []
-            exp_detail = {'name': expense_val.name,
-                          'account_id': self.account_id.id,
-                          'quantity': 1,
-                          'price_unit': expense_val.rate,
-                          'invoice_id': self.inv_obj.id,
-                          'account_analytic_id': self.analytic_id_id.id}
-            expense_details.append(exp_detail)
-            self.env['account.invoice.line'].create(expense_details)
 
         self.change_state('process')
 
@@ -367,9 +377,8 @@ class VoucherDetails(models.Model):
 
     name = fields.Char()
     voucher_id = fields.Many2one(comodel_name="payment_voucher.ebs", string="", required=False, )
-    date = fields.Date(string="Date", required=False, )
-    details = fields.Text(string="Detailed Description of Service and Work", required=False, )
-    payee_id = fields.Many2one('res.partner', string='Payee', track_visibility='onchange', readonly=True,)
+    details = fields.Text(string="Particulars", required=False, )
+    payee_id = fields.Many2one('res.partner', string='Payee', track_visibility='onchange', )
     rate = fields.Float(string="Rate/Amount",  required=False, )
 
 

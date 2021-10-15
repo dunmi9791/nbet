@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <report
+            id="finance_voucher_print"
+            string="Payment Voucher"
+            model="payment_voucher.ebs"
+            report_type="qweb-pdf"
+            file="nbet.report_paymentvoucher"
+            name="nbet.report_paymentvoucher"/>
+    </data>
+</odoo>

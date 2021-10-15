@@ -28,10 +28,11 @@
         'views/actions.xml',
         'data/groups.xml',
         'views/views.xml',
-        'views/templates.xml',
         'views/menu.xml',
         'data/automation.xml',
         'security/ir.model.access.csv',
+        'report/report_template.xml',
+        'report/report.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
