@@ -259,8 +259,27 @@
                  <t t-name="kanban-box">
                      <div t-attf-class="oe_kanban_global_click">
 
+                                <div class="text-center">
+                                    <i class="fa fa-envelope" role="img" aria-label="Enterprise" title="Enterprise"></i> <strong><field name="voucher_no"/></strong>
+                                </div>
+                                <hr class="mt4 mb4"/>
+                                <div class="row">
+                                    <div t-if="record.originating_memo.value" class="col-6 text-center">
+                                        <strong>Memo:</strong>
+                                    </div>
+                                    <div t-if="record.amount.value" class="col-6 text-center">
+                                        <strong>Amount</strong>
+                                    </div>
+                                    <div t-if="record.originating_memo.value" class="col-6 text-center">
+                                        <field name="originating_memo"/>
+                                    </div>
+                                    <div t-if="record.amount.value" class="col-6 text-center o_force_ltr">
+                                        <field name="amount"/>
+                                    </div>
+                                </div>
 
-                           <p><h4><field name="originating_memo"/></h4></p>
+
+
 
                </div>
                     </t>

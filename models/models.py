@@ -310,6 +310,15 @@ class PaymentVoucher(models.Model):
     def _amount(self):
         self.amount = sum(voucher_details.rate for voucher_details in self.voucher_details_ids)
 
+    # @api.multi
+    # def open_vouchers(self):
+    #     total_len = self.env['payment_voucher.ebs'].search_count([])
+    #     result = total_len
+    #     return result
+    #
+
+
+
     @api.multi
     def is_allowed_transition(self, old_state, new_state):
         allowed = [('draft', 'Prepared'),

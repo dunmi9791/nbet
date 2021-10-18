@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
 
-<menuitem name="EBS Process" id="nbet_root_menu" web_icon="nbet,static/src/img/icon.png"/>
+<menuitem name="EBS Finance" id="nbet_root_menu" web_icon="nbet,static/src/img/icon.png"/>
 
     <menuitem name="Finance " id="nbet_finance_menu" parent="nbet_root_menu"
               sequence="1" />
