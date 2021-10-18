@@ -37,6 +37,7 @@ class TravelAdvanceRequest(models.Model):
     memo_to = fields.Many2one(comodel_name="res.users", string="TO", required=True,
                               domain=lambda self: [
                                   ("groups_id", "=", self.env.ref("nbet.hod_group").id)])
+    voucher_obj = fields.Many2one('payment_voucher.ebs', invisible=1)
 
     @api.model
     def create(self, vals):
@@ -92,7 +93,23 @@ class TravelAdvanceRequest(models.Model):
 
     @api.multi
     def process(self):
+        voucher_obj = self.env['payment_voucher.ebs'].create({'originating_memo': self.request_no,
+
+                                                                  })
+
+        self.voucher_obj = voucher_obj
+        for expense_val in self.travel_details_ids:
+            advance_details = []
+            exp_detail = {'name': expense_val.allowance,
+                          'payee_id': self.traveller_name.id,
+                          'rate': self.amount_total,
+                          'voucher_id': self.voucher_obj.id,
+                          }
+            advance_details.append(exp_detail)
+            self.env['voucher_details.ebs'].create(advance_details)
+
         self.change_state('process')
+
 
 
 class TravelDetails(models.Model):

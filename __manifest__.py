@@ -20,7 +20,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'mail', 'account', 'om_account_budget',],
+    'depends': ['base', 'mail', 'account', 'om_account_budget', 'board'],
 
     # always loaded
     'data': [
@@ -29,6 +29,7 @@
         'data/groups.xml',
         'views/views.xml',
         'views/menu.xml',
+        'views/dashboard.xml',
         'data/automation.xml',
         'security/ir.model.access.csv',
         'report/report_template.xml',
