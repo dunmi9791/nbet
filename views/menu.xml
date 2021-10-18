@@ -9,6 +9,8 @@
               sequence="6" action="action_nbet_payment_voucher"/>
         <menuitem name="Payment Mandate" id="nbet_payment_mandate_menu" parent="nbet_finance_menu"
               sequence="7" action="action_nbet_payment_mandate"/>
+    <menuitem name="Bills to post" id="nbet_bills_post_menu" parent="nbet_finance_menu"
+              sequence="8" action="account.action_vendor_bill_template"/>
     <menuitem name="General" id="nbet_general_menu" parent="nbet_root_menu"
               sequence="2" />
         <menuitem name="Travel Advance" id="nbet_travel_advance_menu" parent="nbet_general_menu"

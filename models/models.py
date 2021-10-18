@@ -15,8 +15,9 @@ class TravelAdvanceRequest(models.Model):
 
     request_no = fields.Char(string="Request Number", default=lambda self: _('New'), requires=False, readonly=True,
                              trace_visibility='onchange', )
-    request_date = fields.Datetime(string="Date/Time of request", required=False, )
-    traveller_name = fields.Char(string="Name of Traveller", required=False, )
+    request_date = fields.Datetime(string="Date/Time of request", required=False, default=lambda self: fields.datetime.now())
+    traveller_name = fields.Many2one('res.users', 'Requesting User', readonly=True, default=lambda self: self.env.user.id)
+    # traveller_name = fields.Char(string="Name of Traveller", required=False, )
     travel_date = fields.Date(string="Date of Travel", required=False, )
     destination = fields.Char(string="Organisation/Destination", required=False,)
     traveller_address = fields.Text(string="Traveller Address", required=False, )
@@ -30,6 +31,12 @@ class TravelAdvanceRequest(models.Model):
                                         ('Fin Approve', 'Fin Approved'),  ('process', 'Processed'),
                                         ('Rejected', 'Rejected'), ], required=False, copy=False, default='draft',
                              readonly=True, track_visibility='onchange', )
+    active = fields.Boolean(
+        string='Active',
+        required=False, default=True)
+    memo_to = fields.Many2one(comodel_name="res.users", string="TO", required=True,
+                              domain=lambda self: [
+                                  ("groups_id", "=", self.env.ref("nbet.hod_group").id)])
 
     @api.model
     def create(self, vals):
@@ -226,14 +233,13 @@ class AdvanceRequest(models.Model):
     @api.multi
     def process(self):
         voucher_obj = self.env['payment_voucher.ebs'].create({'originating_memo': self.request_no,
-                                                              'payee_id': self.payee_id.id,
-                                                              'amount': self.amount_total,
-                                                              'class_code': self.class_code,
-                                                              'deptal_no': self.deptal_no})
+
+                                                              })
         self.voucher_obj = voucher_obj
         for expense_val in self.advance_details_ids:
             advance_details = []
             exp_detail = {'name': expense_val.description,
+                          'payee_id': self.payee_id.id,
                           'rate': expense_val.amount,
                           'voucher_id': self.voucher_obj.id,
                            }
@@ -269,7 +275,7 @@ class PaymentVoucher(models.Model):
     voucher_details_ids = fields.One2many(comodel_name="voucher_details.ebs", inverse_name="voucher_id",
                                           string="Voucher Details", required=False, )
     payable_at = fields.Char(string="Payable At", required=False, )
-    originating_memo = fields.Char(string="Originating Memo", required=False, )
+    originating_memo = fields.Char(string="Originating Memo", required=False, readonly=True)
     state = fields.Selection(string="",
                              selection=[('draft', 'draft'), ('Prepared', 'Prepared'), ('FC Sign Off', 'FC Sign Off'),
                                         ('CFO Approval', 'CFO Approval'),
