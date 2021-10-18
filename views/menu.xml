@@ -17,7 +17,7 @@
               sequence="3" />
         <menuitem name="Travel Advance" id="nbet_travel_advance_menu" parent="nbet_general_menu"
               sequence="6" action="action_nbet_travel_advance"/>
-        <menuitem name="Staff Advance" id="nbet_staff_advance_menu" parent="nbet_general_menu"
+        <menuitem name="Cash Advance" id="nbet_staff_advance_menu" parent="nbet_general_menu"
               sequence="7" action="action_nbet_staff_advance"/>
 
 

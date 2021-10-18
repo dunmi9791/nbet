@@ -24,13 +24,13 @@
         <field name="arch" type="xml">
             <form string="Travel Advance Request" duplicate="0">
                 <header>
-                    <button name="travel_advance_request" type="object" string="Request Travel Advance" class="oe_highlight" states="draft"/>
-                    <button name="travel_advance_approve" type="object" string="Approve travel advance" class="oe_highlight"  states="Requested"/>
-                    <button name="travel_advance_fin_approve" type="object" string="Financial Approval" class="oe_highlight" states="HOD Approve"/>
-                    <button name="travel_advance_reject" type="object" string="Reject Request" class="oe_highlight" states="Requested" />
-                    <button name="travel2_advance_reject" type="object" string="Reject Request" class="oe_highlight" states="HOD Approve" />
+                    <button name="travel_advance_request" type="object" string="Request Travel Advance" class="oe_highlight" states="draft" />
+                    <button name="travel_advance_approve" type="object" string="Approve travel advance" class="oe_highlight"  states="Requested" groups="nbet.hod_group"/>
+                    <button name="travel_advance_fin_approve" type="object" string="Financial Approval" class="oe_highlight" states="HOD Approve" groups="nbet.chief_financial_group"/>
+                    <button name="travel_advance_reject" type="object" string="Reject Request" class="oe_highlight" states="Requested" groups="nbet.hod_group"/>
+                    <button name="travel2_advance_reject" type="object" string="Reject Request" class="oe_highlight" states="HOD Approve" groups="nbet.chief_financial_group"/>
 
-                    <button name="process" string="Process" class="oe_highlight" states="Fin Approve"  type="object"/>
+                    <button name="process" string="Process" class="oe_highlight" states="Fin Approve"  type="object" groups="nbet.cash_accountant_group"/>
 
                 <field name="state" widget="statusbar" statusbar_visible="draft,Requested,Approved,Rejected"/>
                 </header>
@@ -95,7 +95,7 @@
         <field name="name">staff_advance.form</field>
         <field name="model">advance_request.ebs</field>
         <field name="arch" type="xml">
-            <form string="Staff Advance Request" >
+            <form string="Cash Advance Request" >
                 <header>
                     <button name="staff_advance_request" type="object" string="Request Staff Advance" class="oe_highlight" states="draft"/>
                     <button name="staff_advance_hod_approve" type="object" string="Staff advance HOD Approve" class="oe_highlight"  states="Requested"/>
@@ -174,12 +174,12 @@
         <field name="arch" type="xml">
             <form string="Payment Voucher" duplicate="0">
                 <header>
-                    <button name="payment_voucher_request" type="object" string="Submit Voucher" class="oe_highlight" states="draft"/>
-                    <button name="payment_voucher_prepare" type="object" string="FC Sign off " class="oe_highlight"  states="Prepared"/>
-                    <button name="voucher_cfo_approve" type="object" string="CFO Approval" class="oe_highlight" states="FC Sign Off"/>
-                    <button name="travel_advance_reject" type="object" string="Reject Request" class="oe_highlight" states="Prepared" />
-                    <button name="travel2_advance_reject" type="object" string="Reject Request" class="oe_highlight" states="FC Sign Off" />
-                    <button name="payment_voucher_process" type="object" string="Process Voucher" class="oe_highlight" states="CFO Approval"/>
+                    <button name="payment_voucher_request" type="object" string="Submit Voucher" class="oe_highlight" states="draft" groups="nbet.cash_accountant_group"/>
+                    <button name="payment_voucher_prepare" type="object" string="FC Sign off " class="oe_highlight"  states="Prepared" groups="nbet.financial_controller_group"/>
+                    <button name="voucher_cfo_approve" type="object" string="CFO Approval" class="oe_highlight" states="FC Sign Off" groups="nbet.chief_financial_group"/>
+                    <button name="voucher_advance_reject" type="object" string="Reject Request" class="oe_highlight" states="Prepared" groups="nbet.financial_controller_group"/>
+                    <button name="voucher2_advance_reject" type="object" string="Reject Request" class="oe_highlight" states="FC Sign Off" groups="nbet.chief_financial_group"/>
+                    <button name="payment_voucher_process" type="object" string="Process Voucher" class="oe_highlight" states="CFO Approval" groups="nbet.cash_accountant_group"/>
 
                     <button name="process" string="Process" class="oe_highlight" states="Fin Approve"  type="object"/>
 

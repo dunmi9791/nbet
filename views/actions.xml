@@ -7,7 +7,7 @@
         <field name="view_mode">tree,form</field>
     </record>
     <record model="ir.actions.act_window" id="action_nbet_staff_advance">
-        <field name="name">Staff Advance</field>
+        <field name="name">Cash Advance</field>
         <field name="res_model">advance_request.ebs</field>
         <field name="view_mode">tree,form</field>
     </record>
