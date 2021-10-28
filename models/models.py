@@ -46,12 +46,12 @@ class TravelAdvanceRequest(models.Model):
         result = super(TravelAdvanceRequest, self).create(vals)
         return result
 
-    @api.one
+    # 
     @api.depends('travel_details_ids.total', )
     def _amount_total(self):
         self.amount_total = sum(travel_details.total for travel_details in self.travel_details_ids)
 
-    @api.multi
+    # 
     def is_allowed_transition(self, old_state, new_state):
         allowed = [('draft', 'Requested'),
                    ('Requested', 'HOD Approve'),
@@ -62,7 +62,7 @@ class TravelAdvanceRequest(models.Model):
                    ]
         return (old_state, new_state) in allowed
 
-    @api.multi
+    # 
     def change_state(self, new_state):
         for travel in self:
             if travel.is_allowed_transition(travel.state, new_state):
@@ -71,27 +71,27 @@ class TravelAdvanceRequest(models.Model):
                 msg = _('Moving from %s to %s is not allowed') % (travel.state, new_state)
                 raise UserError(msg)
 
-    @api.multi
+    
     def travel_advance_request(self):
         self.change_state('Requested')
 
-    @api.multi
+    
     def travel_advance_approve(self):
         self.change_state('HOD Approve')
 
-    @api.multi
+    
     def travel_advance_fin_approve(self):
         self.change_state('Fin Approve')
 
-    @api.multi
+    
     def travel_advance_reject(self):
         self.change_state('Rejected')
 
-    @api.multi
+    
     def travel2_advance_reject(self):
         self.change_state('Rejected')
 
-    @api.multi
+    
     def process(self):
         voucher_obj = self.env['payment_voucher.ebs'].create({'originating_memo': self.request_no,
 
@@ -125,7 +125,7 @@ class TravelDetails(models.Model):
     days = fields.Integer(string="Days", required=False, )
     total = fields.Float(string="Total",  required=False, compute='_compute_price_subtotal', store=True, digits=0 )
 
-    @api.one
+    
     @api.depends('rates', 'days',  )
     def _compute_price_subtotal(self):
         self.total = self.rates * self.days
@@ -167,12 +167,12 @@ class AdvanceRequest(models.Model):
                                  default=lambda self: self.env.user.company_id)
     currency_id = fields.Many2one('res.currency', compute='_compute_currency', store=True, string="Currency")
 
-    @api.one
+    
     @api.depends('company_id')
     def _compute_currency(self):
         self.currency_id = self.company_id.currency_id or self.env.user.company_id.currency_id
 
-    @api.one
+    
     @api.depends('advance_details_ids.amount', )
     def _amount_total(self):
         self.amount_total = sum(advance_details.amount for advance_details in self.advance_details_ids)
@@ -184,7 +184,7 @@ class AdvanceRequest(models.Model):
         result = super(AdvanceRequest, self).create(vals)
         return result
 
-    @api.multi
+    
     def is_allowed_transition(self, old_state, new_state):
         allowed = [('draft', 'Requested'),
                    ('Requested', 'HOD Approve'),
@@ -202,7 +202,7 @@ class AdvanceRequest(models.Model):
                    ]
         return (old_state, new_state) in allowed
 
-    @api.multi
+    
     def change_state(self, new_state):
         for advance in self:
             if advance.is_allowed_transition(advance.state, new_state):
@@ -211,43 +211,55 @@ class AdvanceRequest(models.Model):
                 msg = _('Moving from %s to %s is not allowed') % (advance.state, new_state)
                 raise UserError(msg)
 
-    @api.multi
+    
     def staff_advance_request(self):
         self.change_state('Requested')
 
-    @api.multi
+    
     def staff_advance_hod_approve(self):
         self.change_state('HOD Approve')
 
-    @api.multi
+    
     def staff_advance_fc_approve(self):
         self.change_state('FC Approve')
 
-    @api.multi
+    
     def staff_advance_ceo_approve(self):
         self.change_state('CEO Approve')
 
-    @api.multi
+    
     def staff_advance_cfo_approve(self):
         self.change_state('CFO Approve')
 
-    @api.multi
+    
     def staff_advance_input_details(self):
         self.change_state('Input Details')
 
-    @api.multi
+    
     def staff_advance_review_details(self):
         self.change_state('Review Details')
 
-    @api.multi
+    
     def staff_advance_cfo_forward(self):
         self.change_state('CFO Forward')
 
-    @api.multi
+    
     def staff2_advance_reject(self):
         self.change_state('Rejected')
 
-    @api.multi
+    def staff3_advance_reject(self):
+        self.change_state('Rejected')
+
+    def staff4_advance_reject(self):
+        self.change_state('Rejected')
+
+    def staff5_advance_reject(self):
+        self.change_state('Rejected')
+
+    def staff_advance_reject(self):
+        self.change_state('Rejected')
+
+    
     def process(self):
         voucher_obj = self.env['payment_voucher.ebs'].create({'originating_memo': self.request_no,
 
@@ -314,7 +326,7 @@ class PaymentVoucher(models.Model):
         required=False, default=True)
     date = fields.Date(string="Date", required=False, )
 
-    # @api.one
+    # 
     # @api.depends('analytic_id_id', )
     # def _total_realised(self):
     #
@@ -328,12 +340,12 @@ class PaymentVoucher(models.Model):
         result = super(PaymentVoucher, self).create(vals)
         return result
 
-    @api.one
+    
     @api.depends('voucher_details_ids.rate', )
     def _amount(self):
         self.amount = sum(voucher_details.rate for voucher_details in self.voucher_details_ids)
 
-    # @api.multi
+    # 
     # def open_vouchers(self):
     #     total_len = self.env['payment_voucher.ebs'].search_count([])
     #     result = total_len
@@ -342,7 +354,7 @@ class PaymentVoucher(models.Model):
 
 
 
-    @api.multi
+    
     def is_allowed_transition(self, old_state, new_state):
         allowed = [('draft', 'Prepared'),
                    ('Prepared', 'FC Sign Off'),
@@ -353,7 +365,7 @@ class PaymentVoucher(models.Model):
                    ]
         return (old_state, new_state) in allowed
 
-    @api.multi
+    
     def change_state(self, new_state):
         for voucher in self:
             if voucher.is_allowed_transition(voucher.state, new_state):
@@ -362,19 +374,26 @@ class PaymentVoucher(models.Model):
                 msg = _('Moving from %s to %s is not allowed') % (voucher.state, new_state)
                 raise UserError(msg)
 
-    @api.multi
+    
     def payment_voucher_request(self):
         self.change_state('Prepared')
 
-    @api.multi
+    
     def payment_voucher_prepare(self):
         self.change_state('FC Sign Off')
 
-    @api.multi
+    
     def voucher_cfo_approve(self):
         self.change_state('CFO Approval')
 
-    @api.multi
+    def voucher_advance_reject(self):
+        self.change_state('Rejected')
+
+    def voucher2_advance_reject(self):
+        self.change_state('Rejected')
+
+
+    
     def payment_voucher_process(self):
         if not self.voucher_type:
             raise UserError(_('You Have to enter Voucher type to post Voucher'))
@@ -450,6 +469,50 @@ class PaymentMandate(models.Model):
         return result
 
 
+    def is_allowed_transition(self, old_state, new_state):
+        allowed = [('draft', 'Forward'),
+                   ('Forward', 'FC Review'),
+                   ('FC Review', 'Rejected'),
+                   ('FC Review', 'CFO Review'),
+                   ('CFO Review', 'CFO forward'),
+                   ('CFO forward', 'FC forward'),
+                   ('FC forward', 'Dispatch'),
+                   ('Dispatch', 'acknowledge'),
+                   ]
+        return (old_state, new_state) in allowed
+
+    def change_state(self, new_state):
+        for mandate in self:
+            if mandate.is_allowed_transition(mandate.state, new_state):
+                mandate.state = new_state
+            else:
+                msg = _('Moving from %s to %s is not allowed') % (mandate.state, new_state)
+                raise UserError(msg)
+
+    def payment_mandate_forward(self):
+        self.change_state('Forward')
+
+    def payment_mandate_review(self):
+        self.change_state('FC Sign Off')
+
+    def payment_mandate_cfo_review(self):
+        self.change_state('CFO Approval')
+
+    def payment_mandate_reject(self):
+        self.change_state('Rejected')
+
+    def payment_mandate_reject2(self):
+        self.change_state('Rejected')
+
+    def payment_mandate_reject3(self):
+        self.change_state('Rejected')
+
+    def payment_mandate_approve(self):
+        self.change_state('Rejected')
+
+    def payment_mandate_process(self):
+        self.change_state('Rejected')
+
 
 class DiscoInvoicing(models.Model):
     _name = 'disco_invoicing.ebs'
@@ -473,7 +536,7 @@ class DiscoInvoicing(models.Model):
     cummulative_interest = fields.Float(string='Total Interest')
 
 
-    @api.multi
+    
     @api.depends('')
     def _get_years(self):
         year_list = []
@@ -482,7 +545,7 @@ class DiscoInvoicing(models.Model):
         return year_list
 
 
-    @api.one
+
     @api.depends('month', 'year')
     def billing_circle(self):
         for record in self:

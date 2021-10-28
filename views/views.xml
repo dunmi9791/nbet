@@ -181,7 +181,7 @@
                     <button name="voucher2_advance_reject" type="object" string="Reject Request" class="oe_highlight" states="FC Sign Off" groups="nbet.chief_financial_group"/>
                     <button name="payment_voucher_process" type="object" string="Process Voucher" class="oe_highlight" states="CFO Approval" groups="nbet.cash_accountant_group"/>
 
-                    <button name="process" string="Process" class="oe_highlight" states="Fin Approve"  type="object"/>
+                    <button name="payment_voucher_process" string="Process" class="oe_highlight" states="Fin Approve"  type="object"/>
 
                 <field name="state" widget="statusbar" statusbar_visible="draft,Requested,Approved,Rejected"/>
                 </header>
@@ -306,7 +306,7 @@
                     <button name="payment_mandate_reject3" type="object" string="Reject Mandate" class="oe_highlight" states="CFO Review" />
                     <button name="payment_mandate_approve" type="object" string="Approve Mandate" class="oe_highlight" states="CFO Review"/>
 
-                    <button name="process" string="Process" class="oe_highlight" states="Fin Approve"  type="object"/>
+                    <button name="payment_mandate_process" string="Process" class="oe_highlight" states="Fin Approve"  type="object"/>
 
                 <field name="state" widget="statusbar" statusbar_visible="draft,Requested,Approved,Rejected"/>
                 </header>
