@@ -4,7 +4,7 @@
 
         <report
             id="finance_voucher_print"
-            string="Payment Voucher"
+            string="Voucher"
             model="payment_voucher.ebs"
             report_type="qweb-pdf"
             file="nbet.report_paymentvoucher"

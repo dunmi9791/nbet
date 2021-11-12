@@ -6,11 +6,14 @@
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="o">
                     <t t-call="web.external_layout">
-                        <div class="page">
+                        <h2>Test Print</h2>
+                        Amount: <t t-esc="o.amount" />
 
-                        </div>
 
-                    </t>
+
+
+
+                        </t>
                 </t>
 
             </t>
