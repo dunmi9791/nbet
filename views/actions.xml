@@ -17,6 +17,11 @@
         <field name="res_model">disco_invoicing.ebs</field>
         <field name="view_mode">tree,form,pivot,kanban</field>
     </record>
+    <record model="ir.actions.act_window" id="action_nbet_voucher_type">
+            <field name="name">Voucher Type</field>
+            <field name="res_model">voucher_type.ebs</field>
+            <field name="view_mode">tree,form</field>
+    </record>
 <!--    <record model="ir.actions.act_window" id="action_nbet_genco_invoicing">-->
 <!--        <field name="name">GENCO Invoicing</field>-->
 <!--        <field name="res_model">genco_invoicing.ebs</field>-->
