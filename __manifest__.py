@@ -3,15 +3,14 @@
     'name': "NBET_Process",
 
     'summary': """
-        Short (1 phrase/line) summary of the module's purpose, used as
-        subtitle on modules listing or apps.openerp.com""",
+        This module was developed to streamline the financial/accounting app to fit NBET Specific Process""",
 
     'description': """
-        Long description of module's purpose
+        to keep the financial module as close to what NBET is use to as possible
     """,
 
-    'author': "My Company",
-    'website': "http://www.yourcompany.com",
+    'author': "Dominic Anyanna",
+    'website': "http://www.pglnigeria.com",
 
     # Categories can be used to filter modules in modules listing
     # Check https://github.com/odoo/odoo/blob/12.0/odoo/addons/base/data/ir_module_category_data.xml
@@ -20,7 +19,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'mail', 'account', 'om_account_budget', 'board', 'om_account_asset', 'web'],
+    'depends': ['base', 'mail', 'account', 'om_account_budget', 'board', 'om_account_asset', 'web', 'om_dynamic_reports'],
 
     # always loaded
     'data': [
