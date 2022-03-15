@@ -13,7 +13,8 @@
               sequence="8" action="account.action_vendor_bill_template"/>
     <menuitem name="DISCO Payments" id="nbet_payments_menu" parent="nbet_payment_menu"
               sequence="9" action="account.action_account_payments"/>
-
+    <menuitem name="Budget" id="nbet_budget_menu" parent="nbet_root_menu"
+              sequence="3" />
 
     <menuitem name="Reports" id="nbet_report_menu" parent="nbet_root_menu"
               sequence="4" />
