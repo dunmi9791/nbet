@@ -76,6 +76,7 @@
                 <tree string="Voucher Details" create="true" delete="true" editable="bottom">
 
 
+                    <field name="payee_type" />
                     <field name="payee_id" />
                     <field name="details"/>
                     <field name="rate"/>
@@ -213,6 +214,8 @@
                           <field name="name"/>
                           <field name="account_id"/>
                           <field name="analytic_account_id"/>
+                          <field name="mode_payment" domain="[('type', 'in', ('bank', 'cash'))]" />
+                          <field name="bill_journal" domain="[('type', 'not in', ('bank', 'cash'))]" />
 
                       </group>
                       <group>

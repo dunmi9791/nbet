@@ -144,6 +144,13 @@ class VoucherDetails(models.Model):
     details = fields.Text(string="Particulars", required=False, )
     payee_id = fields.Many2one('res.partner', string='Payee', track_visibility='onchange', )
     rate = fields.Float(string="Rate/Amount",  required=False, )
+    payee_type = fields.Selection(
+        string='Payee Type',
+        selection=[('vendor', 'Vendor'),
+                   ('disco', 'Disco'),
+                   ('genco', 'Genco'),
+                   ('employee', 'Employee'), ],
+        required=False, )
 
 
 class PaymentMandate(models.Model):
@@ -229,19 +236,31 @@ class VoucherType(models.Model):
 
     name = fields.Char()
     account_id = fields.Many2one(comodel_name='account.account', string='Account')
-    analytic_account_id = fields.Many2one(comodel_name='account.analytic.account', string='Analytic Account')
+    analytic_account_id = fields.Many2one(comodel_name='account.analytic.account', string='Budget Line/Analytic Account')
+    mode_payment = fields.Many2one(comodel_name='account.journal', string='Payment Account')
+    bill_journal = fields.Many2one(comodel_name='account.journal', string='Expense Journal')
 
 
+class VoucherPayment(models.Model):
+    _name = 'voucher_payment.ebs'
+    _rec_name = 'name'
+    _description = 'payment voucher'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
-
-
-
-
-
-
-
-
-
+    name = fields.Char()
+    voucher_type = fields.Many2one(comodel_name="voucher_type.ebs", string='Voucher Type')
+    mode_payment = fields.Many2one(comodel_name='account.journal', string='Payment Mode')
+    payee_id = fields.Many2one('res.partner', string='Payee', track_visibility='onchange', readonly=True,
+                               states={'draft': [('readonly', False)], 'Fin Approve': [('readonly', False)]}, )
+    cost_centre = fields.Selection(
+        string='Cost Centre',
+        selection=[('vendor', 'Vendor'),
+                   ('disco', 'Disco'),
+                   ('genco', 'Genco'),
+                   ('employee', 'Employee'),],
+        required=False, )
+    invoice_id = fields.Many2one(string='Invoice', comodel_name='account.invoice', )
+    rate = fields.Float(string="Amount", required=False, )
 
 # class nbet__process(models.Model):
 #     _name = 'nbet__process.nbet__process'
