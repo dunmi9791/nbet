@@ -16,7 +16,7 @@ class PaymentVoucher(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
     name = fields.Char()
-    voucher_type = fields.Many2one(comodel_name="voucher_type.ebs", string='Voucher Type')
+    voucher_type = fields.Many2one(comodel_name="voucher_type.ebs", string='Payment Type')
     address = fields.Text(string="Address", required=False, )
     class_code = fields.Char(string="Classification Code", required=False, )
     voucher_no = fields.Char(string="Voucher Number", default=lambda self: _('New'), requires=False, readonly=True,
@@ -37,7 +37,7 @@ class PaymentVoucher(models.Model):
     budget_position_id = fields.Many2one(comodel_name="account.budget.post", string="Budgetary Position", required=False, )
     # budget_position = fields.Integer(string="Budgetary Position", compute='_total_realised', store=True)
     analytic_id_id = fields.Many2one(comodel_name="account.analytic.account", string="Budget Line", required=False, )
-    mode_payment = fields.Many2one(comodel_name='account.journal', string='Payment Mode')
+    mode_payment = fields.Many2one(comodel_name='account.journal', string='Payment Account')
     narration = fields.Text(
         string="Narration",
         required=False)
