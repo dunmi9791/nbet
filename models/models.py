@@ -31,7 +31,7 @@ class PaymentVoucher(models.Model):
                                         ('process', 'Processed'),
                                         ('Rejected', 'Rejected'), ], required=False, copy=False, default='draft',
                              readonly=True, track_visibility='onchange', )
-    amount = fields.Float('Amount', compute='_amount', store=True)
+    amount = fields.Float('Amount', )
     account_id = fields.Many2one(string="Debit Account", comodel_name='account.account')
     inv_obj = fields.Many2one('account.invoice', invisible=1)
     budget_position_id = fields.Many2one(comodel_name="account.budget.post", string="Budgetary Position", required=False, )
@@ -45,6 +45,31 @@ class PaymentVoucher(models.Model):
         string='Active', 
         required=False, default=True)
     date = fields.Date(string="Date", required=False, )
+    payee_type = fields.Selection(
+        string='Payee Type',
+        selection=[('vendor', 'Vendor'),
+                   ('disco', 'Disco'),
+                   ('genco', 'Genco'),
+                   ],
+        required=False, )
+    payee_id = fields.Many2one('res.partner', string='Payee', track_visibility='onchange', )
+    bill_to_pay = fields.Many2one('account.invoice', string='Payment Bill', )
+    invoice_amount = fields.Float()
+    taxes_applied = fields.Float()
+    net_amount = fields.Float()
+
+    @api.onchange('payee_type')
+    def onchange_payee_type(self):
+        for rec in self:
+            if rec.payee_type == 'vendor':
+                return { 'domain': {'payee_id' : [('supplier', '=', True)]}}
+            elif rec.payee_type == 'disco':
+                return {'domain': {'payee_id' : [('customer', '=', True)]}}
+            elif rec.payee_type == 'genco':
+                return { 'domain': {'payee_id' : [('is_genco', '=', True)]}}
+
+
+
 
     # @api.one
     # @api.depends('analytic_id_id', )
