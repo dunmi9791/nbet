@@ -22,6 +22,11 @@
             <field name="res_model">voucher_type.ebs</field>
             <field name="view_mode">tree,form</field>
     </record>
+    <record model="ir.actions.act_window" id="cash_dynamic_report">
+            <field name="name">Cash Dynamic</field>
+            <field name="res_model">account.move.line</field>
+            <field name="view_mode">tree,form</field>
+    </record>
 <!--    <record model="ir.actions.act_window" id="action_nbet_genco_invoicing">-->
 <!--        <field name="name">GENCO Invoicing</field>-->
 <!--        <field name="res_model">genco_invoicing.ebs</field>-->

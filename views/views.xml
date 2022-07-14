@@ -28,9 +28,9 @@
                 <group>
 
                     <field name="originating_memo"/>
-                    <field name="voucher_type"/>
                     <field name="payee_type"/>
                     <field name="payee_id"/>
+                    <field name="bill_to_pay"/>
 
 
                 <field name="voucher_no"/>
@@ -41,16 +41,29 @@
 
                         <field name="amount" widget="monetary"/>
                         <field name="mode_payment" domain="[('type', 'in', ('bank', 'cash'))]" />
+                        <field name="compute_tax"/>
+                        <field name="payment_id"/>
+                        <field name="journal_no"/>
+                        <field name="total_tax"/>
+
 
 
                     </group>
 
+                    </group>
+                    <group>
+                        <group>
+                        <field name="narration"/>
+                        </group>
+                        <group>
+
+                        </group>
                     </group>
 
 
                     <notebook>
-                    <page string="Voucher Details">
-                        <field name="voucher_details_ids" >
+                    <page string="Tax Details">
+                        <field name="taxes_applied" attrs="{'invisible': [('compute_tax','!=', True)] }">
                         </field>
 
 
@@ -58,9 +71,7 @@
                     </page>
 
                     </notebook>
-                    <group>
-                    <field name="narration"/>
-                    </group>
+
 
 
                 </sheet>
@@ -227,6 +238,18 @@
                   </sheet>
               </form>
           </field>
+
+      </record>
+      <record id="view_filter_cash_inherited" model="ir.ui.view">
+          <field name="name">view_filter_cash_inherited</field>
+          <field name="model">account.move.line</field>
+          <field name="type">search</field>
+          <field name="inherit_id" ref="account.view_account_move_line_filter"/>
+                <field name="arch" type="xml">
+                        <xpath expr="/search/filter[1]" position="after">
+                               <filter name="bank" string="Bank" domain="[()]"/>
+                        </xpath>
+                </field>
 
       </record>
 

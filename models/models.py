@@ -55,8 +55,36 @@ class PaymentVoucher(models.Model):
     payee_id = fields.Many2one('res.partner', string='Payee', track_visibility='onchange', )
     bill_to_pay = fields.Many2one('account.invoice', string='Payment Bill', )
     invoice_amount = fields.Float()
-    taxes_applied = fields.Float()
     net_amount = fields.Float()
+    compute_tax = fields.Boolean(
+        string='Compute tax', 
+        required=False)
+    # taxes_applied = fields.Many2many(
+    #     comodel_name='account.tax',
+    #     string='Taxes_applied')
+    payment_voucher_id = fields.Char(
+        string='Payment_voucher_id', 
+        required=False)
+    taxes_applied = fields.One2many(
+        comodel_name='account.invoice.tax',
+        compute='_related_taxes',
+        string='Taxes_applied',
+        required=False)
+    payment_id = fields.Many2one(
+        comodel_name='account.payment',
+        string='Payment_id',
+        required=False)
+    journal_no = fields.Char(string='Payment Voucher Number', related='payment_id.payment_reference', required=False)
+    total_tax = fields.Float(string='total tax')
+    tax_computed = fields.Boolean(
+        string='Tax_computed',
+        required=False)
+    payments = fields.One2many(
+        comodel_name='account.payment',
+        inverse_name='voucher_payment_id',
+        string='Payments',
+        required=False)
+
 
     @api.onchange('payee_type')
     def onchange_payee_type(self):
@@ -67,6 +95,23 @@ class PaymentVoucher(models.Model):
                 return {'domain': {'payee_id' : [('customer', '=', True)]}}
             elif rec.payee_type == 'genco':
                 return { 'domain': {'payee_id' : [('is_genco', '=', True)]}}
+
+
+    @api.onchange('payee_id')
+    def onchange_payee(self):
+        for rec in self:
+            if rec.payee_id:
+                return { 'domain': {'bill_to_pay' : [('partner_id', '=', rec.payee_id.id), ('type', '=', 'in_invoice'), ('state', '!=', 'paid')]}}
+
+
+    def _related_taxes(self):
+        for rec in self:
+            related_bill = rec.bill_to_pay
+            self.taxes_applied =related_bill.tax_line_ids
+
+
+
+
 
 
 
@@ -130,33 +175,154 @@ class PaymentVoucher(models.Model):
     @api.multi
     def voucher_cfo_approve(self):
         self.change_state('CFO Approval')
+    @api.multi
+    def taxpayment(self):
+        payment_obj = self.env['account.payment'].with_context(active_ids=self.bill_to_pay.ids,
+                                                               active_model='account.move',
+                                                               active_id=self.bill_to_pay.id)
+        taxes = []
+        tax_amount_payment = []
+        for tax in self.taxes_applied:
+            tax_payments = []
+            taxrate = tax.tax_id.amount
+            taxamount = self.amount * abs(taxrate) / 100
+            tax_amounts = []
+
+            tax_pay_vals = {
+                'payment_type': 'outbound',
+                'partner_type': 'supplier',
+                'payment_method_id': 1,
+                'amount': taxamount,
+                'partner_id': 12,
+                'payment_date': self.date,
+                'journal_id': self.mode_payment.id,
+                'communication': "tax payment",
+                'voucher_payment_id': self.id,
+
+            }
+
+            tax_payments.append(tax_pay_vals)
+            payment_ta = payment_obj.create(tax_payments)
+            payment_ta.post()
+
+            # for total in tax_amounts:
+            #     total_tax = sum(total.taxamount)
+            #     net_amount = self.amount - total_tax
+            #     payment_vals = {
+            #         'payment_type': 'outbound',
+            #         'partner_type': 'supplier',
+            #         'payment_method_id': 1,
+            #         'amount': net_amount,
+            #         'partner_id': self.payee_id.id,
+            #         'payment_date': self.date,
+            #         'journal_id': self.mode_payment.id,
+            #         'communication': self.bill_to_pay.name,
+            #
+            #     }
+            #     payment = payment_obj.create(payment_vals)
+            #
+            #     payment.post()
+
+
+    @api.multi
+    def updateamount(self):
+        payments = self.env['account.payment'].search([('voucher_payment_id', '=', self.id)])
+        taxes = []
+        for pay in payments:
+            taxes.append(pay.amount)
+            total = sum(taxes)
+            self.net_amount = self.amount - total
 
     @api.multi
     def payment_voucher_process(self):
-        if not self.voucher_type:
-            raise UserError(_('You Have to enter Voucher type to post Voucher'))
-        if not self.voucher_details_ids.payee_id:
-            raise UserError(_('You Have to enter payee to post Voucher'))
+        if not self.compute_tax:
+            for payment_val in self:
+                payment_obj = self.env['account.payment'].with_context(active_ids=payment_val.bill_to_pay.ids, active_model='account.move',
+                                                                       active_id=payment_val.bill_to_pay.id)
+                payment_vals = []
+                payment_details = {
+                    'payment_type': 'outbound',
+                    'partner_type': 'supplier',
+                    'payment_method_id': 1,
+                    'amount': payment_val.amount,
+                    'partner_id': payment_val.payee_id.id,
+                    'payment_date': payment_val.date,
+                    'journal_id': payment_val.mode_payment.id,
+                    'communication': payment_val.bill_to_pay.name,
+                    'voucher_payment_id': self.id,
 
-        inv_line_obj = self.env['account.invoice']
-        for bill_val in self.voucher_details_ids:
-            bill_vals = []
-            bill_details = {
-                'type': 'in_invoice',
-                'partner_id': bill_val.payee_id.id,
-                'reference': self.voucher_no,
-                'origin': self.originating_memo,
-                'invoice_line_ids': [(0, 0, {
-                                             'name': bill_val.details,
-                                             'account_id': self.voucher_type.account_id.id,
-                                             'quantity': 1,
-                                             'price_unit': bill_val.rate, })]
-            }
-            bill_vals.append(bill_details)
-            inv_line_obj.create(bill_vals)
+                }
+                payment_vals.append(payment_details)
+                payment = payment_obj.create(payment_vals)
+                payment.post()
+                self.payment_id = payment.id
+
+        elif self.compute_tax:
+            self.taxpayment()
+            self.updateamount()
+            for payment_val in self:
+                payment_obj = self.env['account.payment'].with_context(active_ids=payment_val.bill_to_pay.ids, active_model='account.move',
+                                                                       active_id=payment_val.bill_to_pay.id)
+                payment_vals = []
+                payment_details = {
+                    'payment_type': 'outbound',
+                    'partner_type': 'supplier',
+                    'payment_method_id': 1,
+                    'amount': payment_val.net_amount,
+                    'partner_id': payment_val.payee_id.id,
+                    'payment_date': payment_val.date,
+                    'journal_id': payment_val.mode_payment.id,
+                    'communication': payment_val.bill_to_pay.name,
+                    'voucher_payment_id': self.id,
+
+                }
+                payment_vals.append(payment_details)
+                payment = payment_obj.create(payment_vals)
+                payment.post()
+                self.payment_id = payment.id
+
+                # self.payment_id = payment.id
 
 
         self.change_state('process')
+
+    # @api.multi
+    # def write(self, values):
+    #     #return super(PaymentVoucher, self).write(values)
+    #     # Add code here
+    #     if values.get('state'):
+    #         if values.get('state') == 'process':
+    #             payval = []
+    #             value = values.get('amount')
+    #             pays = values.get('payments')
+    #             for val in self.payments:
+    #                 payment_obj = self.env['account.payment'].with_context(active_ids=self.bill_to_pay.ids,
+    #                                                                        active_model='account.move',
+    #                                                                        active_id=self.bill_to_pay.id)
+    #                 tax_total = sum(val.amount)
+    #                 net_amount = value - tax_total
+    #                 payment_vals = {
+    #                     'payment_type': 'outbound',
+    #                     'partner_type': 'supplier',
+    #                     'payment_method_id': 1,
+    #                     'amount': net_amount,
+    #                     'partner_id': self.payee_id.id,
+    #                     'payment_date': self.date,
+    #                     'journal_id': self.mode_payment.id,
+    #                     'communication': self.bill_to_pay.name,
+    #
+    #                 }
+    #                 payval.append(payment_vals)
+    #                 payment_less = payment_obj.create(payval)
+    #
+    #                 payment_less.post()
+    #
+    #                 self.payment_id = payment_less.id
+    #                 return super(PaymentVoucher, self).write(values)
+    #         else:
+    #             return super(PaymentVoucher, self).write(values)
+    #     else:
+    #         return super(PaymentVoucher, self).write(values)
 
 
 class VoucherDetails(models.Model):

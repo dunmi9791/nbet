@@ -36,6 +36,8 @@
               sequence="4" />
     <menuitem name="Dynamic Reports" id="nbet_disco_invoicing_menu" parent="nbet_report_menu"
               sequence="6" action="om_dynamic_reports.action_dynamic_reorts"/>
+    <menuitem name="Editable Cashbook" id="nbet_edit_cash_menu" parent="nbet_report_menu"
+              sequence="6" action="cash_dynamic_report"/>
     <menuitem name="Invoices Analysis" id="nbet_invoices_menu" parent="nbet_report_menu" sequence="7" action="account.action_account_invoice_report_all"/>
     <menuitem name="Budget Analysis" id="nbet_budgets_menu" parent="nbet_report_menu" sequence="8" action="om_account_budget.act_crossovered_budget_lines_view"/>
     <menuitem name="Assets" id="nbet_assets_menu" parent="nbet_report_menu" sequence="9" action="om_account_asset.action_asset_asset_report"/>
