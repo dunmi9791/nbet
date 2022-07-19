@@ -247,7 +247,8 @@
           <field name="inherit_id" ref="account.view_account_move_line_filter"/>
                 <field name="arch" type="xml">
                         <xpath expr="/search/filter[1]" position="after">
-                               <filter name="bank" string="Bank" domain="[()]"/>
+                               <filter name="bank" string="Bank" domain="[('account_id', '=', '13')]"/>
+                             <filter name="today" string="Today" domain="[('date','&lt;=',((context_today()).strftime('%Y-%m-%d'))),]"/>
                         </xpath>
                 </field>
 
