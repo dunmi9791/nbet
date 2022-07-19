@@ -12,9 +12,9 @@
         <menuitem name="Recurring Payment" id="nbet_payment_recurring_menu" parent="nbet_payment_menu"
               sequence="8"/>
             <menuitem name="Recurring Payment" id="nbet_payment_recurring_child_menu" parent="nbet_payment_recurring_menu"
-              sequence="1" action="om_recurring_payments.action_account_recurring_payment"/>
+              sequence="1" action="recurring_payment_12.action_account_recurring_payment"/>
             <menuitem name="Payment Mandate" id="nbet_recurring_template_menu" parent="nbet_payment_recurring_menu"
-              sequence="2" action="om_recurring_payments.action_account_recurring_template"/>
+              sequence="2" action="recurring_payment_12.action_account_recurring_template"/>
     <menuitem name="Bills to post" id="nbet_bills_post_menu" parent="nbet_payment_menu"
               sequence="8" action="account.action_vendor_bill_template"/>
     <menuitem name="DISCO Payments" id="nbet_payments_menu" parent="nbet_payment_menu"

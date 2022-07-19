@@ -19,7 +19,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'mail', 'account', 'om_account_budget', 'board', 'om_account_asset', 'web', 'om_dynamic_reports'],
+    'depends': ['base', 'mail', 'account', 'om_account_budget', 'board', 'om_account_asset', 'web', 'om_dynamic_reports', 'recurring_payment_12'],
 
     # always loaded
     'data': [
