@@ -90,7 +90,7 @@
                                 </tr>
                                 <t t-set="total" t-value="0"/>
                                 <t t-foreach="doc.reconciled_invoice_ids" t-as="payment_invoice">
-                                    <t t-foreach="payment_invoice.line_ids" t-as="item">
+                                    <t t-foreach="payment_invoice.invoice_line_ids" t-as="item">
                                         <tr>
                                             <td class="pt-0 pb-0 border-top-0 border-bottom-0" colspan="3">
                                                 <span t-field="item.name"/>
