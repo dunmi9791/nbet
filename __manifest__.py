@@ -32,6 +32,7 @@
         'data/automation.xml',
         'security/ir.model.access.csv',
         'report/report_template.xml',
+        'report/payment.xml',
         'report/report.xml',
     ],
     # only loaded in demonstration mode
