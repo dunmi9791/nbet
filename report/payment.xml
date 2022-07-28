@@ -146,7 +146,7 @@
                                     </th>
                                 </tr>
                                 <t t-foreach="doc.reconciled_invoice_ids" t-as="payment_invoice">
-                                    <t t-foreach="payment_invoice.line_ids" t-as="item">
+                                    <t t-foreach="payment_invoice.invoice_line_ids" t-as="item">
                                         <tr>
                                             <td class="pt-0 pb-0 border-top-0 border-bottom-0" colspan="2" style="border-right: 1px solid black;">
                                                 <span t-field="item.account_id.name"/>
