@@ -7,7 +7,7 @@
             string="Voucher"
             model="payment_voucher.ebs"
             report_type="qweb-pdf"
-            file="nbet.report_paymentvoucher"
-            name="nbet.report_paymentvoucher"/>
+            file="nbet.report_nbetvoucher_doc"
+            name="nbet.report_nbetvoucher_doc"/>
     </data>
 </odoo>

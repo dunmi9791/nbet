@@ -21,6 +21,8 @@
               sequence="9" action="account.action_account_payments"/>
     <menuitem name="Budget" id="nbet_budget_menu" parent="nbet_root_menu"
               sequence="3" />
+<!--        <menuitem name="Budgets" id="nbet_budgets_menu" parent="nbet_budget_menu"-->
+<!--              sequence="8" action="om_account_budget.act_crossovered_budget_view"/>-->
     <menuitem name="Final Accounts" id="nbet_final_account_menu" parent="nbet_root_menu"
               sequence="5" />
         <menuitem name="Balance Sheet" id="nbet_balance_sheet_menu" parent="nbet_final_account_menu"
@@ -29,6 +31,8 @@
               sequence="3" action="accounting_pdf_reports.action_account_balance_menu"/>
         <menuitem name="Profit and Loss" id="nbet_profit_loss_menu" parent="nbet_final_account_menu"
               sequence="4" action="accounting_pdf_reports.action_account_report_pl"/>
+        <menuitem name="Budgets" id="nbet_profit_budget_menu" parent="nbet_budget_menu"
+              sequence="5" action="om_account_budget.act_crossovered_budget_view"/>
     <menuitem name="Assets" id="nbet_assets_account_menu" parent="nbet_root_menu"
               sequence="6" />
 
@@ -39,7 +43,7 @@
     <menuitem name="Editable Cashbook" id="nbet_edit_cash_menu" parent="nbet_report_menu"
               sequence="6" action="cash_dynamic_report"/>
     <menuitem name="Invoices Analysis" id="nbet_invoices_menu" parent="nbet_report_menu" sequence="7" action="account.action_account_invoice_report_all"/>
-    <menuitem name="Budget Analysis" id="nbet_budgets_menu" parent="nbet_report_menu" sequence="8" action="om_account_budget.act_crossovered_budget_lines_view"/>
+    <menuitem name="Budget Analysis test" id="nbet_budgets_menu" parent="nbet_report_menu" sequence="8" action="om_account_budget.act_crossovered_budget_lines_view"/>
     <menuitem name="Assets" id="nbet_assets_menu" parent="nbet_report_menu" sequence="9" action="om_account_asset.action_asset_asset_report"/>
 
     <menuitem name="Settings" id="nbet_setting_menu" parent="nbet_root_menu"
