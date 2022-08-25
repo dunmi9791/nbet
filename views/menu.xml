@@ -21,6 +21,10 @@
               sequence="9" action="account.action_account_payments"/>
     <menuitem name="Budget" id="nbet_budget_menu" parent="nbet_root_menu"
               sequence="3" />
+    <menuitem name="Assets" id="nbet_asset_menu" parent="nbet_root_menu"
+              sequence="4" />
+        <menuitem name="Asset Register" id="nbet_asset_reg_menu" parent="nbet_asset_menu"
+              sequence="2" action= "om_account_asset.action_account_asset_asset_form"/>
 <!--        <menuitem name="Budgets" id="nbet_budgets_menu" parent="nbet_budget_menu"-->
 <!--              sequence="8" action="om_account_budget.act_crossovered_budget_view"/>-->
     <menuitem name="Final Accounts" id="nbet_final_account_menu" parent="nbet_root_menu"
