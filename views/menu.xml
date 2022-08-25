@@ -44,6 +44,8 @@
               sequence="4" />
     <menuitem name="Dynamic Reports" id="nbet_disco_invoicing_menu" parent="nbet_report_menu"
               sequence="6" action="om_dynamic_reports.action_dynamic_reorts"/>
+        <menuitem name="Standard Report" id="nbet_standard_report_menu" parent="nbet_report_menu"
+                  sequence="5" action="account_standard_report.action_account_standard_report" />
     <menuitem name="Contacts" id="nbet_disco_contacts_menu" parent="nbet_report_menu"
               sequence="7" />
         <menuitem name="Discos" id="nbet_discos_contacts_menu" parent="nbet_disco_contacts_menu"
