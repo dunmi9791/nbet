@@ -19,7 +19,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'mail', 'account', 'om_account_budget', 'board', 'om_account_asset', 'web', 'om_dynamic_reports', 'recurring_payment_12', 'ks_dashboard_ninja', 'ebs_ocma'],
+    'depends': ['base', 'mail', 'account', 'om_account_budget', 'board', 'om_account_asset', 'web', 'om_dynamic_reports', 'recurring_payment_12', 'ks_dashboard_ninja', 'ebs_ocma', 'account_standard_report'],
 
     # always loaded
     'data': [
